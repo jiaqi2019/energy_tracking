@@ -1,0 +1,77 @@
+
+{
+  "bsonType": "object",
+  "required": ["user_id", "mood_score", "energy_value"],
+  "properties": {
+    "_id": {
+      "description": "自动生成的文档ID"
+    },
+    "user_id": {
+      "bsonType": "string",
+      "title": "用户ID",
+      "foreignKey": "uni-id-users._id"
+    },
+    "event_name": {
+      "bsonType": "string",
+      "title": "事件",
+	  "maxLength": 50,
+	  "trim": "both"
+    },
+    "event_desc": {
+      "bsonType": "string",
+      "title": "事件详情",
+      "maxLength": 500,
+      "trim": "both"
+    },
+    "mood_score": {
+      "bsonType": "number",
+      "title": "心情评分",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "energy_value": {
+      "bsonType": "double",
+      "title": "能量值",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "is_deleted": {
+      "bsonType": "bool",
+      "title": "删除标记",
+      "defaultValue": false
+    },
+    "create_time": {
+      "bsonType": "timestamp",
+      "title": "创建时间",
+      "defaultValue": {
+        "$env": "now"
+      }
+    },
+    "update_time": {
+      "bsonType": "timestamp",
+      "title": "更新时间",
+      "defaultValue": {
+        "$env": "now"
+      }
+    }
+  },
+  "permission": {
+    "read": "auth.uid != null",
+    "create": "auth.uid != null",
+    "update": "doc.user_id == auth.uid",
+    "delete": "doc.user_id == auth.uid"
+  },
+  "indexes": [
+    {
+      "name": "user_record_index",
+      "fields": [
+        {"field": "user_id", "order": "asc"},
+        {"field": "record_date", "order": "desc"}
+      ]
+    },
+    {
+      "name": "fulltext_event",
+      "fields": ["event_desc"]
+    }
+  ]
+}
