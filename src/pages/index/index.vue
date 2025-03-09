@@ -49,8 +49,6 @@
 	</view>
 	<RecordPopup :show="state.showPopup" :onClose="onClosePopup" :onConfirm="onConfirm"></RecordPopup>
 	<up-toast ref="uToastRef"></up-toast>
-	<CustomNavBar></CustomNavBar>
-
 </template>
 
 <script setup>
