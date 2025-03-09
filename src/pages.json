@@ -123,6 +123,18 @@
       }
     }
   ],
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/statistic/index",
+        "text": "回顾"
+      }
+    ]
+  },
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
