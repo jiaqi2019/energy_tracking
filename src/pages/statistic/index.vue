@@ -15,7 +15,6 @@
       </view>
       <MoodeRingChart :chartData="state.ringChartData" />
     </view>
-	<CustomNavBar></CustomNavBar>
 </template>
 
 <script setup>
