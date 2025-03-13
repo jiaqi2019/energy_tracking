@@ -1,16 +1,17 @@
 <template>
-	<view :class="{'mood-card':true,'mood-pos': props.moodScore > 2, 'mood-nag': props.moodScore < 2 } ">
+	<view :class="{'mood-card':true,'mood-pos': props.moodScore > 0, 'mood-nag': props.moodScore < 0 } ">
 		<!-- 卡片头部 -->
-		<view class="card-header">
-			<view class="time">{{ date }}</view>
-			<view :class="{'mood-score': true, 'mood-score-pos': props.moodScore > 2,'mood-score-nag':props.moodScore < 2 }">
-				{{ moodTextMap[moodScore] }}
-			</view>
+		<view class="flex justify-center">
+			<view class="flex-1">
+        <view class="time">{{ date }}</view>
+        <!-- 卡片内容 -->
+        <view class="card-content text-TextPrimary">
+        	{{ eventDesc || "什么也没写"}}
+        </view>
+      </view>
+      <image :src="moodEmojiMap[props.moodScore]?.icon" class="mood-emoji"/>
 		</view>
-		<!-- 卡片内容 -->
-		<view class="card-content">
-			{{ eventDesc || "什么也没写"}}
-		</view>
+		
 	</view>
 </template>
 
@@ -18,14 +19,7 @@
   import {
     defineProps, ref, computed
   } from 'vue';
-
-  const moodTextMap = ref({
-    0: '不开心',
-    1: '一般',
-    2: '开心',
-    3: '很开心',
-    4: '超级开心'
-  });
+  import { moodEmojiMap } from '@/common/emoji'
   // 定义组件接收的参数
   const props = defineProps<{
     time : number;
@@ -58,25 +52,6 @@
     }
   });
 
-  // 根据心情分映射文字描述
-  const getMoodText = (score : number) => {
-    switch (score) {
-    case 0:
-      return '很不开心';
-    case 1:
-      return '不开心';
-    case 2:
-      return '一般';
-    case 3:
-      return '开心';
-    case 4:
-      return '很开心';
-    case 5:
-      return '超级开心';
-    default:
-      return '未知心情';
-    }
-  };
 </script>
 
 <style scoped>
@@ -126,4 +101,8 @@
 		line-height: 1.5;
 		color: #3d405b;
 	}
+  .mood-emoji {
+    width: 40px;
+    height: 40px;
+  }
 </style>

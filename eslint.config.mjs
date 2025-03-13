@@ -12,7 +12,6 @@ export default [
         ...globals.node,
         uni: 'readonly',
         uniCloud: 'readonly',
-
       }
     }
   },
@@ -72,7 +71,6 @@ export default [
   // Vue 文件的缩进规则
   {
     files: ['**/*.vue'],
-    languageOptions: { parserOptions: { parser: tseslint.parser } },
     rules: {
       'vue/script-indent': ['error', 2, { baseIndent: 1 }],
       'vue/multi-word-component-names': 'off'

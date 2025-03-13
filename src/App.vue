@@ -24,9 +24,147 @@
   });
 </script>
 <style lang="scss">
-@import "uview-plus/index.scss";
 @import '@/uni_modules/uni-scss/index.scss';
-body {
-  background-color: rgb(248, 241, 234);
-}
+  #app, uni-app, uni-page, uni-page-wrapper {
+    height: unset;
+  }
+  body {
+    --text-primary: #161823;
+    // background-color: rgb(248, 241, 234);
+    // background-color: #16182314;
+    color: var(--text-primary);
+    height: unset;
+  }
+	/*每个页面公共css */
+	.w-full {
+    width: 100%;
+  }
+  .flex {
+    display: flex;
+    flex-direction:row;
+  }
+  .flex-col {
+    flex-direction: column;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+    
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-around {
+    justify-content: space-around;
+  }
+  .flex-grow {
+    flex-grow: 1;
+  }
+  .flex-1 {
+    flex: 1
+  }
+  .flex-shrink-0 {
+    flex-shrink: 0;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .relative {
+    position: relative;
+  }
+  .fixed {
+    position: fixed;
+  }
+  .bottom-tabbar {
+   	// bottom: var(--window-bottom);
+  }
+  .left-0 {
+    left: 0;
+  }
+  .right-0 {
+    right: 0;
+  }
+  .top-0 {
+    top-0: 0;
+  }
+  .text-medium {
+    font-weight: bold;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  .abs-full {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+    
+  .abs-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  .p-16 {
+    padding: 16px;
+  }
+  .m-16 {
+    margin: 16px;
+  }
+  .mt-16 {
+    margin-top: 16px;
+  }
+    
+  .px-16 {
+    padding:  0 16px;
+  }
+  .py-16 {
+    padding: 16px 0;
+  }
+  
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  .h1 {
+    font-size: 40px;
+    line-height: 1.5em;
+  }
+  
+  .h3 {
+    font-size: 20px;
+    line-height: 1.5em;
+  }
+    
+  .text-TextPrimary {
+    color: var(--text-primary);
+  }
+  .icon-font {
+    font-family: 'iconfont';
+  }
+  .font-yozai {
+    font-family: Yozai;
+  }
+  @font-face {
+    font-family: 'iconfont';
+    src: url('~@/static/icon/iconfont.ttf') format('truetype');
+  }
+  	
+  @font-face {
+    font-family: Yozai;
+    src: url('./static/font/Yozai-Medium.ttf');
+  }
+  // .uni-tabbar {
+  //   display: none !important;
+  // }
+  // .uni-placeholder {
+  //   display: none !important;
+  // }
+  // .uni-tabbar {
+  //   display: none;
+  // }
 </style>

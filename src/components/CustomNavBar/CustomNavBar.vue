@@ -1,18 +1,18 @@
 <template>
 	<up-tabbar
-		:value="tabIndex"
+		:value="props.tabIndex"
 		@change="onChangeTab"
 		:fixed="true"
-		:placeholder="true"
+		:placeholder="false"
 		:safeAreaInsetBottom="true"
 	>
 		<up-tabbar-item  v-for="(item,index) in state.tabConf" :text="item.text" :icon="item.icon" activeColor='#ff00000'></up-tabbar-item>
 	</up-tabbar>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {
-    reactive, ref, onMounted
+    reactive, ref, onMounted,defineProps
   } from 'vue';
 
   const state = reactive({
@@ -29,6 +29,9 @@
       },
     ],
   });
+  const props = defineProps<{
+    tabIndex: number,
+  }>()
 
   const initIndex = () => {
     const pages = getCurrentPages();
@@ -36,11 +39,13 @@
     const index = state.tabConf.findIndex(t => t.path === `/${currentPath}`);
     return index < 0 ? 0 : index;
   };
-  const tabIndex = ref(initIndex());
+  // const tabIndex = ref(initIndex());
 
-  const onChangeTab = (index) => {
-    tabIndex.value = index;
-    uni.navigateTo({ url: state.tabConf[index].path, });
+  const onChangeTab = (index:number) => {
+    console.log('switch')
+    // tabIndex.value = index;
+    uni.switchTab({ url: state.tabConf[index].path, });
+    // uni.navigateTo({ url: state.tabConf[index].path, });
   };
 
 </script>
