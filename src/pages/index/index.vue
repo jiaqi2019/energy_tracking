@@ -1,224 +1,151 @@
 <template>
-	<view class="page">
-		<view class="u-flex u-flex-items-center">
-			<view class="u-flex u-flex-column u-flex-grow">
-				<text class="title">嗨，{{userStrore.userInfo.nickname}}</text>
-				<text class="subtitle">今天感觉如何</text>
-			</view>
-			<view class="u-flex u-flex-items-center u-flex-center header-action-btn">
-				<u-icon name="bell-fill" color="#e07a5f" size=20></u-icon>
-			</view>
-			<view class="u-flex u-flex-items-center u-flex-center header-action-btn" style="margin-left: 15px;">
-				<u-icon name="setting-fill" color="#e07a5f" size=20></u-icon>
-			</view>
-		</view>
-		<view class="summary-card">
-			<view class="summary-header">
-				<text>本周情绪概览</text>
-				<text>查看详情</text>
-			</view>
-			<view class="stats-row">
-				<view class="stat-box">
-					<view class="stat-value">{{state.recordList.length || 0}}</view>
-					<view class="stat-label">记录总数</view>
-				</view>
-				<view class="stat-box">
-					<view class="stat-value" style="color: #43aa8b;">{{state.positiveCnt}}</view>
-					<view class="stat-label">积极情绪</view>
-				</view>
-				<view class="stat-box">
-					<view class="stat-value" style="color: #f94144;">{{state.negativeCnt}}</view>
-					<view class="stat-label">消极情绪</view>
-				</view>
-			</view>
-		</view>
-		<view class="u-flex u-flex-between u-flex-items-center" style="margin-bottom: 16px;">
-			<view class="section-title">最近记录</view>
-			<view class="section-action">查看全部</view>
-		</view>
-		<view class="u-page">
-			<view v-for="(item, index) in state.recordList" :key="index">
-				<MoodRecordItem :time="item.create_time" :mood-score="item.mood_score" :eventDesc="item.event_desc"></MoodRecordItem>
-			</view>
-		</view>
+  <view class="status_bar" />
+  <view v-if="loadMoreStatus==='noMore' && !state.moodList.length">
+    <text class="h1 font-yozai flex justify-center">你现在感觉怎么样</text>
+    <text class="h3 font-yozai flex justify-center">记录当下，帮你更好觉察情绪</text>
+    <view class="flex justify-center w-full  items-center" style="margin-top: 50px;" @click="onClickAdd">
+      <view class="circle flex items-center justify-center">
+        <text class="icon-font" style="font-size: 100px;">&#xe603;</text>
+      </view>
+    </view>
+  </view>
+  <!-- list渲染 -->
+  <view v-else class="px-16">
+    <text class="h1 font-yozai flex justify-center" style="margin-bottom: 30px;">{{state.currentMoodEmoji.text}}</text>
+    <vew class="flex justify-center w-full">
+      <image :src="state.currentMoodEmoji.icon" class="mood-emoji"/>
+    </vew>
+    <MoodRecordItem v-for="(item, index) in state.moodList" :time="item.create_time" :mood-score="item.mood_score" :eventDesc="item.event_desc"></MoodRecordItem>
+    <uni-load-more :status="state.loadMoreStatus" />
+  </view>
 
-
-	</view>
-	<view class="create-btn" @click="onClickPlus">
-		<u-icon name="plus" color="#ffffff" size=28></u-icon>
-	</view>
-	<RecordPopup :show="state.showPopup" :onClose="onClosePopup" :onConfirm="onConfirm"></RecordPopup>
-	<up-toast ref="uToastRef"></up-toast>
+ <view class="fixed-bottom" @click="onClickAdd">
+    <view class="add-button flex items-center justify-center">
+      <text class="icon-font" style="font-size: 40px;">&#xe603;</text>
+    </view>
+  </view>
 </template>
 
 <script setup>
-  import {
-    onMounted,
-    reactive,
-    ref,
-  } from 'vue';
+import {reactive, onMounted} from 'vue';
+import {moodEmojis} from '@/common/emoji'
   import MoodRecordItem from './components/mood-record-item/index.vue';
-  import RecordPopup from './components/record-popup/index.vue';
   import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
-
-  if(!userStrore.hasLogin) {
+if(!userStrore.hasLogin) {
+  uni.showToast({
+    icon: 'none',
+    title: '请先登录',
+  })
     uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
   }
-  const uToastRef = ref(null);
+const userMoodRecordApi = uniCloud.importObject('user-mood-record');
 
-  const userMoodRecordApi = uniCloud.importObject('user-mood-record');
-  const userIdApi = uniCloud.importObject('uni-id-co');
-  const state = reactive({
-    recordList: [],
-    showPopup: false,
-    positiveCnt: 0,
-    negativeCnt: 0
-  });
-  onMounted(async () => {
-    const recordListRes = await userMoodRecordApi.getAll();
-    console.log(recordListRes);
+const state = reactive({
+  moodList: [],
+  moodEmojis,
+  currentMoodEmoji: {},
+  currentMoodIndex: 0, // 默认选中中间的表情、
+  loadMoreStatus: 'more', // 新增加载更多状态
+  page: 1, // 新增页码
+  pageSize: 10, // 新增每页数量
+})
+
+// 修改获取数据方法
+const loadData = async (reset = false) => {
+  if (reset) {
+    state.page = 1;
+    state.moodList = [];
+  }
+  state.loadMoreStatus = 'loading';
+  try {
+    const recordListRes = await userMoodRecordApi.getAll({
+      page: state.page,
+      pageSize: state.pageSize
+    });
     if (recordListRes.errCode == 0) {
-      const recordList = recordListRes.data;
-      state.recordList = recordList;
-      state.positiveCnt = recordList.filter(item => item.mood_score > 2).length;
-      state.negativeCnt = recordList.filter(item => item.mood_score < 2).length;
+      const {moodEmojis} = state
+      const moodList = recordListRes.data;
+      state.moodList = [...state.moodList, ...moodList];
+      const item = moodEmojis.find(item=>item.value === state.moodList[state.moodList.length-1].mood_score)
+      state.currentMoodEmoji = item ;
+      state.loadMoreStatus = moodList.length < state.pageSize ? 'noMore' : 'more';
+      state.page++;
     }
-    const userInfo = await userIdApi.getRealNameInfo();
-    console.log(userInfo);
-  });
-  const onClickPlus = () => {
-    state.showPopup = true;
-  };
-  const onClosePopup = () => {
-    state.showPopup = false;
-  };
-  const onConfirm = async (data) => {
-    const addRes = await userMoodRecordApi.add(data);
-    if (addRes.errCode != 0) {
-      uToastRef.value.show({ message: addRes.errMsg || '添加失败,请重试!' });
-    } else {
-      console.log(data);
-      uToastRef.value.show({ message: '添加成功' });
-      state.showPopup = false;
-      setTimeout(() => {
-        state.recordList.unshift({
-          ...data,
-          create_time: Date.now()
-        });
-      });
+  } catch (e) {
+    state.loadMoreStatus = 'more';
+    uni.showToast({
+      title: '加载失败',
+      icon: 'none'
+    });
+  }
+}
 
-    }
-  };
+onMounted(()=>{
+  uni.$on('addMood', (data)=>{
+    const {moodEmojis} = state
+    state.moodList.unshift(data);
+    state.currentMoodEmoji = moodEmojis.find(item=>item.value === data.mood_score);
+  });
+  loadData();
+})
+const onClickAdd = ()=>{
+  uni.navigateTo({
+    url:'/pages/mood-form/index',
+    openType: 'navigate'
+  })
+}
+
+const onReachBottom = () => {
+  if (state.loadMoreStatus === 'more') {
+    loadData();
+  }
+}
+
+
 </script>
 
 <style scoped>
-	.page {
-		padding: 16px;
-		height: 100%;
-	}
+	.status_bar {
+    height: var(--status-bar-height);
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  .circle {
+    width: 250px;
+    height: 250px;
+    border-radius: 100%;
+    border: var(--text-primary) solid 10px;
+  }
+  .tabar-mask {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #ffffff;
+  }
+  .mood-text {
+    font-size: 32rpx;
+    margin-bottom: 30rpx;
+  }
+  .mood-emoji {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 30px;
+  }
+ .fixed-bottom {
+    position: fixed;
+    right: 30rpx;
+    bottom: 140rpx;
+    z-index: 999;
+  }
+  
+  .add-button {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    background-color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
 
-	.title {
-		font-size: 24px;
-		font-weight: 700;
-		color: #3d405b;
-	}
-
-	.subtitle {
-		font-size: 14px;
-		color: #81818e;
-		margin-top: 5px;
-	}
-
-	.header-action-btn {
-		width: 40px;
-		height: 40px;
-		border-radius: 15px;
-		background-color: #fce8dd;
-		font-size: 12px;
-		transition: all 0.3s ease;
-	}
-
-	.summary-card {
-		margin: 15px 0;
-		background-color: #fffbf8;
-		border-radius: 22px;
-		padding: 22px;
-		box-shadow: 0 8px 20px rgba(224, 122, 95, 0.08);
-		border: 1px solid rgba(224, 122, 95, 0.15);
-	}
-
-	.summary-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 15px;
-	}
-
-	.summary-title {
-		font-size: 16px;
-		font-weight: 600;
-		color: #3d405b;
-	}
-
-	.summary-more {
-		font-size: 14px;
-		color: #e07a5f;
-	}
-
-	.stats-row {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.stat-box {
-		flex: 1;
-		text-align: center;
-		padding: 10px;
-	}
-
-	.stat-value {
-		font-size: 24px;
-		font-weight: 700;
-		color: #e07a5f;
-		margin-bottom: 5px;
-	}
-
-	.stat-label {
-		font-size: 12px;
-		color: #81818e;
-	}
-
-	.section-header {
-		padding: 0 20px;
-		margin: 25px 0 15px;
-	}
-
-	.section-title {
-		font-size: 18px;
-		font-weight: 600;
-		color: #3d405b;
-	}
-
-	.section-action {
-		font-size: 14px;
-		color: #e07a5f;
-	}
-
-	.create-btn {
-		position: fixed;
-		bottom: 100px;
-		right: 20px;
-		width: 65px;
-		height: 65px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #e07a5f, #e8927a);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: white;
-		font-size: 24px;
-		box-shadow: 0 8px 20px rgba(224, 122, 95, 0.4);
-		z-index: 10;
-		transition: all 0.3s ease;
-	}
+  .add-button .icon-font {
+    color: #fff;
+  }
 </style>

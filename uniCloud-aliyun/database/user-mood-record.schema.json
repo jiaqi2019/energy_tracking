@@ -1,7 +1,7 @@
 
 {
   "bsonType": "object",
-  "required": ["user_id", "mood_score", "energy_value"],
+  "required": ["user_id", "mood_score"],
   "properties": {
     "_id": {
       "description": "自动生成的文档ID"
@@ -10,12 +10,6 @@
       "bsonType": "string",
       "title": "用户ID",
       "foreignKey": "uni-id-users._id"
-    },
-    "event_name": {
-      "bsonType": "string",
-      "title": "事件",
-	  "maxLength": 50,
-	  "trim": "both"
     },
     "event_desc": {
       "bsonType": "string",

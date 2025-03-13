@@ -1,0 +1,132 @@
+<template>
+  <navigation-bar
+    background-color="#ffffff00"
+    blur-effect="light"
+  />
+  
+  <!-- 心情表情和滑动条部分 -->
+  <view class="mood-container">
+    <image :src="moodEmojis[currentMoodIndex].icon" class="mood-emoji"/>
+    <text class="mood-text">{{ moodEmojis[currentMoodIndex].text }}</text>
+      <slider
+        :value="currentMoodIndex"
+        :min="0"
+        :max="4"
+        :step="1"
+        @change="handleMoodChange"
+        class="mood-slider"
+      />
+    
+  </view>
+
+  <!-- 事件内容输入框 -->
+  <view class="content-container">
+    <textarea
+      v-model="content"
+      placeholder="是什么事情让你产生这样的感受？"
+      class="content-input"
+    />
+  </view>
+
+  <!-- 保存按钮 -->
+  <button class="save-btn" @tap="handleSave">存档！</button>
+</template>
+
+<script>
+const userMoodRecordApi = uniCloud.importObject('user-mood-record');
+export default {
+  data() {
+    return {
+      moodEmojis: [
+        { text: '肝肠寸断', icon: '/static/emoji/very-sad.png', value: -2 },
+        { text: '闷闷不乐', icon: '/static/emoji/sad.png', value: -1 },
+        { text: '不喜不悲', icon: '/static/emoji/neutral.png', value: 0 },
+        { text: '怡然自得', icon: '/static/emoji/happy.png', value: 1 },
+        { text: '喜笑颜开', icon: '/static/emoji/very-happy.png', value: 2 }
+      ],
+      currentMoodIndex: 2, // 默认选中中间的表情
+      content: '' // 事件内容
+    }
+  },
+  methods: {
+    handleMoodChange(e) {
+      this.currentMoodIndex = e.detail.value
+    },
+    async handleSave() {
+      const moodData = {
+        mood_score: this.moodEmojis[this.currentMoodIndex].value,
+        event_desc: this.content,
+      }
+      const addRes =await userMoodRecordApi.add(moodData);
+      console.log(addRes)
+      if (addRes.errCode != 0) {
+        uni.showToast({
+          title: '添加失败,请重试!',
+          icon: 'error'
+        })
+        return;
+      } 
+      uni.$emit('addMood', {
+        ...moodData,
+        create_time: Date.now()
+      })
+      // TODO: 这里添加实际的保存逻辑
+      uni.showToast({
+        title: '保存成功！',
+        icon: 'success',
+      })
+      uni.navigateBack({
+        delta: 1
+      })
+    }
+  }
+}
+</script>
+
+<style>
+.mood-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  margin-top: 10px;
+}
+
+.mood-emoji {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.mood-text {
+  font-size: 32rpx;
+  margin-bottom: 30rpx;
+}
+
+.mood-slider {
+  width: 100%;
+  margin: 20rpx 0;
+}
+
+.content-container {
+  padding: 30rpx;
+}
+
+.content-input {
+  width: 100%;
+  height: 200rpx;
+  background: #f5f5f5;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.save-btn {
+  width: 90%;
+  margin: 40rpx auto;
+  background: #007AFF;
+  color: white;
+  border-radius: 12px;
+}
+</style>
