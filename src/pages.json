@@ -22,7 +22,13 @@
       }
     },
     {
-      "path" : "pages/mood-form/index"
+      "path": "pages/mood-form/index"
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
     },
     {
       "path": "uni_modules/uni-id-pages/pages/register/register",
@@ -35,39 +41,50 @@
       "style": {
         "navigationBarTitleText": "登录"
       }
+    },
+    {
+      "path": "pages/analyze/index",
+      "style": {
+        "navigationStyle": "custom",
+        "enableScroll": true,
+        "disableScroll": false
+      }
     }
   ],
   "tabBar": {
-   "color": "#161823",
-   "backgroundColor": "#16182314",
-   "selectedColor": "",
-   "borderStyle":"white",
-   "height": "50px",
-   "fontSize": "12px",
-   "blurEffect":"extralight",
-   "iconfontSrc":"static/icon/iconfont.ttf",
-   "iconWidth": "20px",
-   "list": [
-     {
-       "pagePath": "pages/index/index",
-       "text": "觉察",
-       "iconfont": {
-         "text": "\ue603",
-         "fontSize": "18px",
-         "color": "#ff0000"
-       }
-     },
-     {
-       "pagePath": "pages/statistic/index",
-       "text": "解析",
-       "iconfont": {
-         "text": "\ue603",
-         "fontSize": "18px",
-         "color": "#ff0000"
-       }
-     }
-   ]
+    "borderStyle": "white",
+    "height": "50px",
+    "blurEffect": "extralight",
+    "iconfontSrc": "static/icon/iconfont.ttf",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconfont": {
+          "text": "\ue60f",
+          "selectedText":"\ue60f",
+          "fontSize": "30px",
+          "selectedColor":"#ff0000"
+        }
+      },
+      {
+        "pagePath": "pages/analyze/index",
+        "iconfont": {
+          "text": "\ue6d8",
+          "selectedText":"\ue6d8",
+          "selectedColor":"#ff0000",
+          "fontSize": "30px"
+        }
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "iconfont": {
+          "text": "\ue851",
+          "selectedText":"\ue851",
+          "selectedColor":"#ff0000",
+          "fontSize": "30px"
+        }
+      }
+    ]
   },
-  "globalStyle": {
-  }
+  "globalStyle": {}
 }

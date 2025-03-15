@@ -30,7 +30,7 @@
   }
   body {
     --text-primary: #161823;
-    // background-color: rgb(248, 241, 234);
+    background-color: rgb(237, 242, 250);
     // background-color: #16182314;
     color: var(--text-primary);
     height: unset;
@@ -118,6 +118,12 @@
   }
   .mt-16 {
     margin-top: 16px;
+  }
+  .mt-8 {
+    margin-top: 8px;
+  }
+  .ml-16 {
+    margin-left: 16px;
   }
     
   .px-16 {
