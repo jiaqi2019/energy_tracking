@@ -1,15 +1,15 @@
 <template>
 	<view :class="{'mood-card':true,'mood-pos': props.moodScore > 0, 'mood-nag': props.moodScore < 0 } ">
 		<!-- 卡片头部 -->
-		<view class="flex justify-center">
+		<view class="flex items-center">
 			<view class="flex-1">
         <view class="time">{{ date }}</view>
         <!-- 卡片内容 -->
-        <view class="card-content text-TextPrimary">
+        <view class="card-content text-TextPrimary mt-8">
         	{{ eventDesc || "什么也没写"}}
         </view>
       </view>
-      <image :src="moodEmojiMap[props.moodScore]?.icon" class="mood-emoji"/>
+      <image :src="moodEmojiMap[props.moodScore]?.icon" class="mood-emoji ml-16"/>
 		</view>
 		
 	</view>
@@ -100,6 +100,11 @@
 		font-size: 15px;
 		line-height: 1.5;
 		color: #3d405b;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 	}
   .mood-emoji {
     width: 40px;
