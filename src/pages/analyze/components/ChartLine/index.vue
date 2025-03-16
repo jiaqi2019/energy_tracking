@@ -73,7 +73,15 @@ const chartData = computed(() => ({
   }],
 }))
 
-const chartOpts = {
+// 计算图表容器宽度
+const getChartWidth = computed(() => {
+  const minPointWidth = 80; // 每个数据点的最小宽度（像素）
+  const minWidth = 300; // 最小容器宽度
+  return `${Math.max(props.moodList.length * minPointWidth, minWidth)}px`;
+});
+
+// 计算图表配置
+const chartOpts = computed(() => ({
   padding: [15, 30, 10, 15],
   enableScroll: false,
   legend: { show: false },
@@ -82,7 +90,7 @@ const chartOpts = {
     itemCount: 5,
     fontSize: 12,
     color: "#999999",
-    boundaryGap: true
+    boundaryGap: "center" // 使用center来使数据点居中显示
   },
   yAxis: {
     disabled: true,
@@ -114,13 +122,7 @@ const chartOpts = {
     },
   },
   dataLabel: false
-};
-
-// 计算图表容器宽度
-const getChartWidth = computed(() => {
-  const minPointWidth = 80; // 每个数据点的最小宽度（像素）
-  return `${Math.max(props.moodList.length * minPointWidth, 300)}px`;
-});
+}));
 
 const handleScroll = (e) => {
   // 处理滚动事件，如果需要
