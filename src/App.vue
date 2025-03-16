@@ -4,17 +4,24 @@
     onLaunch, onShow, onHide
   } from '@dcloudio/uni-app';
   import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
+  import { syncMoodList } from '@/api/moodList/syncMoodList';
 
   onLaunch(async () => {
     await uniIdPageInit();
     console.log('userStrore', userStrore);
-    // if(!userStrore.hasLogin || userStrore.isExpired) {
-    //   // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
-    // }
+    if(!userStrore.isExpired) {
+      // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+      // return;
+    }
+    if(!userStrore.hasLogin) {
+      uni.$on('uni-id-pages-login-success', () => {
+        console.log('login success');
+        syncMoodList();
+      });
+    }
     uniCloud.onRefreshToken(function (e) {
       console.log('refreshToken', e);
     });
-    console.log('App Launch');
   });
   onShow(() => {
     console.log('App Show');
@@ -34,6 +41,7 @@
     // background-color: #16182314;
     color: var(--text-primary);
     height: unset;
+    padding-bottom: 80px;
   }
 	/*每个页面公共css */
 	.w-full {
@@ -52,7 +60,7 @@
   .justify-center {
     justify-content: center;
   }
-    
+
   .justify-between {
     justify-content: space-between;
   }
@@ -92,7 +100,7 @@
   .text-medium {
     font-weight: bold;
   }
-  
+
   .text-center {
     text-align: center;
   }
@@ -103,7 +111,7 @@
     left: 0;
     right: 0;
   }
-    
+
   .abs-center {
     position: absolute;
     top: 50%;
@@ -125,14 +133,14 @@
   .ml-16 {
     margin-left: 16px;
   }
-    
+
   .px-16 {
     padding:  0 16px;
   }
   .py-16 {
     padding: 16px 0;
   }
-  
+
   .overflow-hidden {
     overflow: hidden;
   }
@@ -140,12 +148,12 @@
     font-size: 40px;
     line-height: 1.5em;
   }
-  
+
   .h3 {
     font-size: 20px;
     line-height: 1.5em;
   }
-    
+
   .text-TextPrimary {
     color: var(--text-primary);
   }
@@ -159,7 +167,7 @@
     font-family: 'iconfont';
     src: url('~@/static/icon/iconfont.ttf') format('truetype');
   }
-  	
+
   @font-face {
     font-family: Yozai;
     src: url('./static/font/Yozai-Medium.ttf');

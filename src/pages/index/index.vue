@@ -18,90 +18,127 @@
       <image :src="currentMoodEmoji.icon" class="mood-emoji" />
     </vew>
     <MoodRecordItem
-      v-for="(item, index) in state.moodList"
+      :key="item.create_time"
+      v-for="(item) in state.moodList"
+      :id="item._id"
       :time="item.create_time"
       :mood-score="item.mood_score"
       :eventDesc="item.event_desc"
+      @delete="handleDelete"
+      class="mood-item"
     ></MoodRecordItem>
     <uni-load-more :status="state.loadMoreStatus" />
     <AddButton custom-class="fixed-bottom"/>
   </view>
-  
+
 </template>
 
 <script setup>
-import { reactive, computed } from "vue";
-import { moodEmojiMap } from "@/common/emoji";
-import MoodRecordItem from "./components/mood-record-item/index.vue";
-import AddButton from "./components/add-button/index.vue";
-import { store as userStrore } from "@/uni_modules/uni-id-pages/common/store.js";
-import { getMoodListFromLocal } from "@/api/moodList";
-
-const userMoodRecordApi = uniCloud.importObject("user-mood-record");
+import {
+ reactive, computed, onMounted
+} from 'vue';
+import { moodEmojiMap } from '@/common/emoji';
+import MoodRecordItem from './components/mood-record-item/index.vue';
+import AddButton from './components/add-button/index.vue';
+import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
+import {
+ getMoodListFromLocal, getMoodList
+} from '@/api/moodList/index';
+import { onReachBottom } from '@dcloudio/uni-app';
+import {
+ delMoodListFromLocal, delMoodListFromApi
+} from '@/api/moodList/del';
+const userMoodRecordApi = uniCloud.importObject('user-mood-record', { customUI: true });
 const state = reactive({
   moodList: !userStrore.hasLogin ? getMoodListFromLocal(true) : [],
-  loadMoreStatus: userStrore.hasLogin ? 'more' :'noMore', // 新增加载更多状态
-  page: 1, // 新增页码
-  pageSize: 10, // 新增每页数量
+  loadMoreStatus: userStrore.hasLogin ? 'more' : 'noMore', // 新增加载更多状态
 });
+
 
 // 1. 获取最新一条记录的表情
 const currentMoodEmoji = computed(() => {
-  if (!state.moodList.length) return {}
-  const latestMood = state.moodList[state.moodList.length-1];
-  return state.currentMoodEmoji = moodEmojiMap[latestMood.mood_score];;
-})
+  if (!state.moodList.length) return {};
+  const latestMood = state.moodList[0];
+  return moodEmojiMap[latestMood.mood_score] || moodEmojiMap[0];
+});
 
-uni.$on("addMood", (data) => {
+uni.$on('addMood', (data) => {
   const { moodEmojis } = state;
-  if(!userStrore.hasLogin){
+  if(!userStrore.hasLogin) {
     uni.setStorageSync('moodList', [...state.moodList, data]);
   }
-  console.log(uni.getStorageSync('moodList'))
+  console.log(uni.getStorageSync('moodList'));
   state.moodList.unshift(data);
-  state.currentMoodEmoji = moodEmojiMap[data.mood_score];
 });
 
 
-const loadData = async (reset = false) => {
-  if(!userStrore.hasLogin){
+onMounted(() => {
+  if(!userStrore.hasLogin) {
     return;
   }
-  
-  const res = await getMoodList();
-  state.loadMoreStatus = "loading";
+  loadDataFromApi();
+});
+
+const loadDataFromApi = async () => {
   try {
-    const recordListRes = await userMoodRecordApi.getAll({
-      page: state.page,
-      pageSize: state.pageSize,
-    });
-    if (recordListRes.errCode == 0) {
-      const { moodEmojis } = state;
-      const moodList = recordListRes.data;
+    state.loadMoreStatus = 'loading';
+    const {
+      errCode, data,
+    } = await userMoodRecordApi.getMoodList(state.moodList.length);
+    if (errCode == 0) {
+      const {
+        mood_list, has_more
+      } = data;
+      const moodList = mood_list;
       state.moodList = [...state.moodList, ...moodList];
-      const item = moodEmojis.find(
-        (item) =>
-          item.value === state.moodList[state.moodList.length - 1].mood_score
-      );
-      state.currentMoodEmoji = item;
-      state.loadMoreStatus =
-        moodList.length < state.pageSize ? "noMore" : "more";
-      state.page++;
+      const latestMood = state.moodList[state.moodList.length - 1];
+      state.loadMoreStatus = has_more ? 'more' : 'noMore';
+    } else {
+      // 自定义错误处理
+      uni.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+      state.loadMoreStatus = 'more';
     }
   } catch (e) {
-    state.loadMoreStatus = "more";
+    // 自定义错误处理
     uni.showToast({
-      title: "加载失败",
-      icon: "none",
+      title: '加载失败',
+      icon: 'none'
+    });
+    state.loadMoreStatus = 'more';
+  }
+};
+
+// 处理删除事件
+const handleDelete = async ({
+id, create_time
+}) => {
+  if(!userStrore.hasLogin) {
+    delMoodListFromLocal(create_time);
+    const index = state.moodList.findIndex(item => item._id === id);
+    if (index !== -1) {
+      state.moodList.splice(index, 1);
+    }
+    return;
+  }
+  const res = await delMoodListFromApi(id);
+  if(res.errCode === 0) {
+    state.moodList = state.moodList.filter(item => item._id !== id);
+  } else {
+    uni.showToast({
+      title: '删除失败',
+      icon: 'none'
     });
   }
 };
 
-const onReachBottom = () => {
-  if (state.loadMoreStatus === "more") {
-    loadData();
+onReachBottom(() => {
+  if (state.loadMoreStatus === 'more') {
+    loadDataFromApi();
   }
-};
+});
 </script>
 
 <style scoped>
@@ -139,6 +176,14 @@ const onReachBottom = () => {
 
 .btn-large {
   margin-top: 100px;
+}
+
+.mood-item {
+  margin-bottom: 15px;
+}
+
+.mood-item:last-child {
+  margin-bottom: 0;
 }
 
 </style>

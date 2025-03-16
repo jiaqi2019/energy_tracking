@@ -20,8 +20,8 @@
     "mood_score": {
       "bsonType": "number",
       "title": "心情评分",
-      "minimum": 0,
-      "maximum": 5
+      "minimum": -2,
+      "maximum": 2
     },
     "energy_value": {
       "bsonType": "double",

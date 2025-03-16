@@ -68,7 +68,7 @@ const chartData = computed(() => ({
   }),
   series: [{
     name: "心情",
-    data: props.moodList.map(mood => mood.mood_score),
+    data: props.moodList.map(mood => Math.min(mood.mood_score, 2)),
     color: "#FF9F7E",
   }],
 }))

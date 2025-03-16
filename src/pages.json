@@ -12,7 +12,10 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationStyle": "custom"
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false,
+        "onReachBottomDistance": 50,
+        "enableScroll": true
       }
     },
     {
@@ -22,7 +25,10 @@
       }
     },
     {
-      "path": "pages/mood-form/index"
+      "path": "pages/mood-form/index",
+      "style": {
+        "navigationBarTitleText": "当下你感受如何"
+      }
     },
     {
       "path": "pages/settings/index",
@@ -40,6 +46,12 @@
       "path": "uni_modules/uni-id-pages/pages/login/login-withpwd",
       "style": {
         "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "/uni_modules/uni-id-pages/pages/retrieve/retrieve",
+      "style": {
+        "navigationBarTitleText": "找回密码"
       }
     },
     {

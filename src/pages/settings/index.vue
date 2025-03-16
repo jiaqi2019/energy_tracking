@@ -9,7 +9,7 @@
     <view class="content">
       <!-- 登录按钮区域 -->
       <view class="action-buttons">
-        <button v-if="false" class="action-btn primary-btn font-yozai" @click="handleLogin">
+        <button v-if="!userStrore.hasLogin" class="action-btn primary-btn font-yozai" @click="handleLogin">
           登录
         </button>
         <button class="action-btn secondary-btn font-yozai" @click="handleJoinUs">
@@ -30,17 +30,20 @@
 </template>
 
 <script setup>
+import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
+
 const handleLogin = () => {
   // 处理登录逻辑
-}
+  uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+};
 
 const handleJoinUs = () => {
   // 处理加入逻辑
-}
+};
 
 const handleContact = () => {
   // 处理联系方式逻辑
-}
+};
 </script>
 
 <style scoped>
@@ -90,7 +93,7 @@ const handleContact = () => {
 }
 
 .secondary-btn {
-  background-color: #43AA8B;  
+  background-color: #43AA8B;
   color: white;
   border: none;
 }

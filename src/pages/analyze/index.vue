@@ -60,7 +60,7 @@
       <ChartLine :selectedTime="selectedTime" :moodList="currentMoodList" :type="selectedTime" />
     </view>
 
-    <!-- 统计 Tab 内容 --> 
+    <!-- 统计 Tab 内容 -->
     <view v-if="activeTab === 'statistics'" class="statistics-content">
       <MoodHeatmap :moodList="currentMoodList"/>
        <view class="login-cta">
@@ -75,17 +75,21 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import MoodHeatmap from "./components/MoodHeatMap/index.vue";
-import ChartLine from "./components/ChartLine/index.vue";
-import { store as userStrore } from "@/uni_modules/uni-id-pages/common/store.js";
-import { getMoodListLocal } from "@/api/moodList";
-import { onShow } from '@dcloudio/uni-app'
+import {
+ ref, watch, onMounted
+} from 'vue';
+import MoodHeatmap from './components/MoodHeatMap/index.vue';
+import ChartLine from './components/ChartLine/index.vue';
+import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
+import {
+ getMoodListLocal, calculateAverageMoodByDay
+} from '@/api/moodList/index';
+import { onShow } from '@dcloudio/uni-app';
 
 // 初始化 Tab 状态
-const activeTab = ref("chart");
+const activeTab = ref('chart');
 // 初始化时间选择状态
-const selectedTime = ref("today");
+const selectedTime = ref('today');
 // 初始化登陆状态
 const isLoggedIn = ref(false);
 
@@ -94,6 +98,9 @@ const weekMoodList = ref([]);
 const monthMoodList = ref([]);
 const currentMoodList = ref([]); // 当前展示的数据
 
+// 初始化云对象
+const userMoodRecordApi = uniCloud.importObject('user-mood-record', { customUI: true // 禁用默认提示框
+});
 
 const fetchLocalData = async () => {
   try {
@@ -101,7 +108,7 @@ const fetchLocalData = async () => {
     weekMoodList.value = await getMoodListLocal('week');
     monthMoodList.value = await getMoodListLocal('month');
     updateCurrentMoodList();
-   
+
   } catch (error) {
     console.error('获取本地数据失败:', error);
   }
@@ -110,35 +117,22 @@ const fetchLocalData = async () => {
 // 获取云端数据
 const fetchCloudData = async () => {
   try {
-    const db = uniCloud.database();
-    const today = new Date();
-    const weekAgo = new Date(today - 7 * 24 * 60 * 60 * 1000);
-    const monthAgo = new Date(today - 30 * 24 * 60 * 60 * 1000);
-
     // 获取今日数据
-    const todayResult = await db.collection('mood-records')
-      .where({
-        date: db.gt(new Date(today.setHours(0,0,0,0)))
-      }).get();
+    const todayResult = await userMoodRecordApi.getMoodByToday();
     todayMoodList.value = todayResult.data;
-
     // 获取周数据
-    const weekResult = await db.collection('mood-records')
-      .where({
-        date: db.gt(weekAgo)
-      }).get();
-    weekMoodList.value = weekResult.data;
-
+    const weekResult = await userMoodRecordApi.getMoodByLastWeek();
+    weekMoodList.value = calculateAverageMoodByDay(weekResult.data);
     // 获取月数据
-    const monthResult = await db.collection('mood-records')
-      .where({
-        date: db.gt(monthAgo)
-      }).get();
-    monthMoodList.value = monthResult.data;
-
+    const monthResult = await userMoodRecordApi.getMoodByLastMonth();
+    monthMoodList.value = calculateAverageMoodByDay(monthResult.data);
     updateCurrentMoodList();
   } catch (error) {
     console.error('获取云端数据失败:', error);
+    uni.showToast({
+      title: '获取数据失败',
+      icon: 'none'
+    });
   }
 };
 
@@ -146,12 +140,7 @@ const fetchCloudData = async () => {
 const updateCurrentMoodList = () => {
   switch (selectedTime.value) {
     case 'today':
-     console.log("todayMoodList", todayMoodList.value);
-    console.log("weekMoodList", weekMoodList.value);
-    console.log("monthMoodList", monthMoodList.value);
       currentMoodList.value = todayMoodList.value;
-    console.log("currentMoodList", currentMoodList.value);
-
       break;
     case 'week':
       currentMoodList.value = weekMoodList.value;
@@ -266,7 +255,7 @@ onShow(() => {
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
-  
+
 }
 
 .title {

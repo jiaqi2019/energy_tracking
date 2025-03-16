@@ -1,31 +1,77 @@
 <template>
-	<view :class="{'mood-card':true,'mood-pos': props.moodScore > 0, 'mood-nag': props.moodScore < 0 } ">
-		<!-- 卡片头部 -->
-		<view class="flex items-center">
-			<view class="flex-1">
-        <view class="time">{{ date }}</view>
-        <!-- 卡片内容 -->
-        <view class="card-content text-TextPrimary mt-8">
-        	{{ eventDesc || "什么也没写"}}
-        </view>
-      </view>
-      <image :src="moodEmojiMap[props.moodScore]?.icon" class="mood-emoji ml-16"/>
-		</view>
-		
-	</view>
+	<uni-swipe-action>
+		<uni-swipe-action-item>
+			<template v-slot:right>
+				<view class="delete-btn" @click="handleSwipeClick">
+					<text class="delete-text">删除</text>
+				</view>
+			</template>
+			<view :class="{'mood-card':true,'mood-pos': props.moodScore > 0, 'mood-nag': props.moodScore < 0 } ">
+				<!-- 卡片头部 -->
+				<view class="flex items-center">
+					<view class="flex-1">
+						<view class="time">{{ date }}</view>
+						<!-- 卡片内容 -->
+						<view class="card-content text-TextPrimary mt-8">
+							{{ eventDesc || "什么也没写"}}
+						</view>
+					</view>
+					<image :src="moodEmojiMap[props.moodScore]?.icon" class="mood-emoji ml-16"/>
+				</view>
+			</view>
+		</uni-swipe-action-item>
+	</uni-swipe-action>
 </template>
 
 <script setup lang="ts">
   import {
-    defineProps, ref, computed
+    defineProps, ref, computed, defineEmits
   } from 'vue';
   import { moodEmojiMap } from '@/common/emoji'
+  
   // 定义组件接收的参数
   const props = defineProps<{
+    id: string;
     time : number;
     moodScore : number;
     eventDesc : string;
   }>();
+
+  const emit = defineEmits(['delete']);
+
+  // 处理滑动按钮点击
+  const handleSwipeClick = async () => {
+    emit('delete', {id: props.id, create_time: props.time});
+    // uni.showModal({
+    //   title: '提示',
+    //   content: '确定要删除这条记录吗？',
+    //   success: async function (res) {
+    //     if (res.confirm) {
+    //       try {
+    //         const result = await uniCloud.callObject('user-mood-record', {
+    //           method: 'deleteById',
+    //           params: props.id
+    //         });
+            
+    //         if (result) {
+    //           uni.showToast({
+    //             title: '删除成功',
+    //             icon: 'success'
+    //           });
+    //           // 通知父组件更新列表
+    //           emit('delete', props.id);
+    //         }
+    //       } catch (error) {
+    //         uni.showToast({
+    //           title: '删除失败',
+    //           icon: 'error'
+    //         });
+    //       }
+    //     }
+    //   }
+    // });
+  };
+
   const date = computed(() => {
     // 获取当前时间
     const now = Date.now();
@@ -59,7 +105,6 @@
 		background-color: #fffbf8;
 		border-radius: 18px;
 		padding: 18px;
-		margin-bottom: 15px;
 		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
 		transition: transform 0.3s ease;
 		border-left: 5px solid #e07a5f;
@@ -110,4 +155,22 @@
     width: 40px;
     height: 40px;
   }
+
+  .delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dd524d;
+    height: 100%;
+    padding: 0 32rpx;
+    margin-left: 8rpx;
+    border-radius: 18px;
+  }
+
+  .delete-text {
+    color: #ffffff;
+    font-size: 32rpx;
+  }
+
+  /* 移除所有margin-bottom相关样式 */
 </style>

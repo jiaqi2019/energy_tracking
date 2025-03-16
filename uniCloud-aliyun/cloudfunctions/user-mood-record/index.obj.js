@@ -15,16 +15,6 @@ const getMoodByCustomTime = async ({
   return res;
 };
 
-const getMoodGroupByCustomTime = async ({
-  user_id, start_time,  end_time
-}) => {
-  const res = await dbJQL.collection('user-mood-record').where({
-    is_deleted: false,
-    user_id,
-    create_time: dbCmd.gte(start_time).and(dbCmd.lte(end_time))
-  }).groupBy('mood_score').groupField('count(*) as total_mood').get();
-  return res;
-};
 module.exports = {
   _before: async function () { // 通用预处理器
     this.startTime = Date.now();
@@ -61,6 +51,22 @@ module.exports = {
     const res = await dbJQL.collection('user-mood-record').add(record);
     return res;
   },
+
+  // 新增批量添加接口
+  batchAdd: async function (recordsArray) {
+    const user_id = this.payload.uid;
+
+    // 为每条记录添加必要的字段
+    const records = recordsArray.map(record => ({
+      is_deleted: false,
+      user_id,
+      ...record
+    }));
+
+    const res = await dbJQL.collection('user-mood-record').add(records);
+    return res;
+  },
+
   getAll: async function () {
     const user_id = this.payload.uid;
     const res = await dbJQL.collection('user-mood-record').where({
@@ -70,6 +76,39 @@ module.exports = {
     return {
       user_info: this.payload,
       ...res,
+    };
+  },
+  getMoodList: async function (offset = 0, limit = 10) {
+    const user_id = this.payload.uid;
+
+    // Get total count for has_more calculation
+    const countResult = await dbJQL.collection('user-mood-record')
+      .where({
+        is_deleted: false,
+        user_id
+      })
+      .count();
+
+    // Get paginated records
+    const result = await dbJQL.collection('user-mood-record')
+      .where({
+        is_deleted: false,
+        user_id
+      })
+      .orderBy('create_time', 'desc')
+      .skip(offset)
+      .limit(limit)
+      .get();
+
+    // Calculate if there are more records
+    const total = countResult.total;
+    const has_more = offset + limit < total;
+    return {
+      ...result,
+      data: {
+        mood_list: result.data,
+        has_more,
+      }
     };
   },
   // 新增获取当天心情数据的方法
@@ -114,39 +153,24 @@ module.exports = {
       end_time
     });
   },
-  getMoodGroupByLastWeek: async function () {
-    const user_id = this.payload.uid;
-    const end_time = new Date().getTime();
-    const start_time = end_time - 7 * 24 * 60 * 60 * 1000;
-    return getMoodGroupByCustomTime({
-      user_id,
-      start_time,
-      end_time
-    });
-  },
-  getMoodGroupByLastMonth: async function () {
-    const user_id = this.payload.uid;
-    const end_time = new Date().getTime();
-    const start_time = end_time - 30 * 24 * 60 * 60 * 1000;
-    return getMoodGroupByCustomTime({
-      user_id,
-      start_time,
-      end_time
-    });
-  },
 
-  getMoodGroup: async function (start_date, end_date) {
+  // 新增删除心情记录的方法
+  deleteById: async function (id) {
     const user_id = this.payload.uid;
-    const start_time = new Date(start_date).getTime();
-    const end_time = new Date(end_date).getTime();
-    return getMoodGroupByCustomTime({
-      user_id,
-      start_time,
-      end_time
-    });;
+    // 确保用户只能删除自己的数据
+    const res = await dbJQL.collection('user-mood-record')
+      .where({
+        _id: id,
+        user_id,
+        is_deleted: false
+      })
+      .update({
+        is_deleted: true,
+        update_time: Date.now()
+      });
+
+    return res;
   },
-
-
 
   _after (error, result) {
     if (error) {
