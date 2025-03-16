@@ -63,7 +63,7 @@
           "text": "\ue60f",
           "selectedText":"\ue60f",
           "fontSize": "30px",
-          "selectedColor":"#ff0000"
+          "selectedColor":"#7bcdbf"
         }
       },
       {
@@ -71,7 +71,7 @@
         "iconfont": {
           "text": "\ue6d8",
           "selectedText":"\ue6d8",
-          "selectedColor":"#ff0000",
+          "selectedColor":"#7bcdbf",
           "fontSize": "30px"
         }
       },
@@ -80,7 +80,7 @@
         "iconfont": {
           "text": "\ue851",
           "selectedText":"\ue851",
-          "selectedColor":"#ff0000",
+          "selectedColor":"#7bcdbf",
           "fontSize": "30px"
         }
       }
