@@ -8,9 +8,9 @@
   onLaunch(async () => {
     await uniIdPageInit();
     console.log('userStrore', userStrore);
-    if(!userStrore.hasLogin || userStrore.isExpired) {
-      // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
-    }
+    // if(!userStrore.hasLogin || userStrore.isExpired) {
+    //   // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+    // }
     uniCloud.onRefreshToken(function (e) {
       console.log('refreshToken', e);
     });
