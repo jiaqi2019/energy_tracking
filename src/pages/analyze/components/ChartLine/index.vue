@@ -12,7 +12,7 @@
     <view class="chart-body">
       <!-- 左侧表情图标 -->
       <view class="mood-icons">
-        <view v-for="(mood, index) in moodIcons" :key="index" class="mood-icon">
+        <view v-for="(mood, index) in moodEmojis" :key="index" class="mood-icon">
           <image :src="mood.icon" mode="aspectFit" />
         </view>
       </view>
@@ -20,9 +20,12 @@
       <!-- 可滚动的图表区域 -->
       <view class="chart-main">
         <scroll-view
+          ref="scrollViewRef"
           scroll-x
           class="chart-scroll-view"
+          id="chart-scroll-view"
           :show-scrollbar="false"
+          :scroll-left="scrollLeft"
           @scroll="handleScroll"
         >
           <view class="chart-container">
@@ -40,69 +43,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+// Add props definition
+interface Props {
+  moodList: Mood[]; // You'll need to import this type from src/api/moodList.ts
+  type?: 'today' | 'week' | 'month' // 添加type属性
+}
+import { ref, onMounted, defineProps, computed, watch, nextTick } from "vue";
+import { moodEmojis } from "@/common/emoji";
+
+const props = defineProps<Props>()
+const scrollViewRef = ref(null);  // 添加 ref
 
 const showTooltip = ref(false);
-
-// 表情配置
-const moodIcons = [
-  {
-    level: 2,
-    icon: "/static/emoji/very-happy.png",
-    label: "很好",
-  },
-  {
-    level: 1,
-    icon: "/static/emoji/happy.png",
-    label: "好",
-  },
-  {
-    level: 0,
-    icon: "/static/emoji/neutral.png",
-    label: "一般",
-  },
-  {
-    level: -1,
-    icon: "/static/emoji/sad.png",
-    label: "差",
-  },
-  {
-    level: -2,
-    icon: "/static/emoji/very-sad.png",
-    label: "很差",
-  },
-];
+const scrollLeft = ref(0);
 
 // 生成测试数据
-function generateData() {
-  const data = [];
-  const now = new Date();
-
-  for (let i = 14; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    data.push({
-      time: `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`,
-      value: Math.floor(Math.random() * 5) - 2,
-    });
-  }
-
-  // 设置最后一个点为-2
-  data[data.length - 1].value = -2;
-
-  return data;
-}
-
-const chartData = {
-  categories: generateData().map((item) => item.time),
-  series: [
-    {
-      name: "心情",
-      data: generateData().map((item) => item.value),
-      color: "#FF9F7E",
-    },
-  ],
-};
+const chartData = computed(() => ({
+  categories: props.moodList.map(mood => {
+    const date = new Date(mood.create_time)
+    // 根据type类型返回不同的日期格式
+    return props.type === 'today' 
+      ? `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
+      : `${date.getMonth() + 1}/${date.getDate()}`
+  }),
+  series: [{
+    name: "心情",
+    data: props.moodList.map(mood => mood.mood_score),
+    color: "#FF9F7E",
+  }],
+}))
 
 const chartOpts = {
   padding: [15, 30, 10, 15],
@@ -129,7 +98,7 @@ const chartOpts = {
     line: {
       type: "curve",
       width: 2,
-      activeType: "hollow",
+      activeType: "none",
       linearType: "custom",
     },
     point: {
@@ -138,13 +107,37 @@ const chartOpts = {
       borderColor: "#FF9F7E",
       fillColor: "#ffffff",
     },
-    tooltip: { showBox: false },
+    tooltip: {
+      showBox: false,
+      labelFormatter: () => ""
+    },
   },
+  dataLabel: false
 };
 
 const handleScroll = (e) => {
   // 处理滚动事件，如果需要
 };
+watch(() => props.type, () => {
+  // // 重置滚动位置
+  // const query = uni.createSelectorQuery().in(this);
+  // query.select('.chart-scroll-view')
+  //   .boundingClientRect(data => {
+  //     if (data) {
+  //       uni.createSelectorQuery().in(this)
+  //         .select('#chart-scroll-view')
+  //         .node()
+  //         .exec((res) => {
+  //           console.log("res", res);
+  //           const scrollView = res[0];
+  //           if (scrollView && scrollView.scrollLeft) {
+  //             scrollView.scrollLeft = 0;
+  //           }
+  //         });
+  //     }
+  //   })
+  //   .exec();
+});
 
 </script>
 

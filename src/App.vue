@@ -9,7 +9,7 @@
     await uniIdPageInit();
     console.log('userStrore', userStrore);
     if(!userStrore.hasLogin || userStrore.isExpired) {
-      uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+      // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
     }
     uniCloud.onRefreshToken(function (e) {
       console.log('refreshToken', e);
@@ -30,7 +30,7 @@
   }
   body {
     --text-primary: #161823;
-    background-color: rgb(237, 242, 250);
+    background-color: #ebf2fa;
     // background-color: #16182314;
     color: var(--text-primary);
     height: unset;

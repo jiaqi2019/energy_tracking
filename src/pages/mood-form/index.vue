@@ -33,7 +33,9 @@
 </template>
 
 <script>
+import { store as userStrore } from "@/uni_modules/uni-id-pages/common/store.js";
 const userMoodRecordApi = uniCloud.importObject('user-mood-record');
+
 export default {
   data() {
     return {
@@ -57,15 +59,16 @@ export default {
         mood_score: this.moodEmojis[this.currentMoodIndex].value,
         event_desc: this.content,
       }
-      const addRes =await userMoodRecordApi.add(moodData);
-      console.log(addRes)
-      if (addRes.errCode != 0) {
-        uni.showToast({
-          title: '添加失败,请重试!',
-          icon: 'error'
-        })
-        return;
-      } 
+      if(userStrore.hasLogin){
+        const addRes =await userMoodRecordApi.add(moodData);
+        if (addRes.errCode != 0) {
+          uni.showToast({
+            title: '添加失败,请重试!',
+            icon: 'error'
+          })
+          return;
+        } 
+      }
       uni.$emit('addMood', {
         ...moodData,
         create_time: Date.now()

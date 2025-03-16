@@ -72,6 +72,20 @@ module.exports = {
       ...res,
     };
   },
+  // 新增获取当天心情数据的方法
+  getMoodByToday: async function () {
+    const user_id = this.payload.uid;
+    const now = new Date();
+    const end_time = now.getTime();
+    // 设置时间为当天的 00:00:00
+    now.setHours(0, 0, 0, 0);
+    const start_time = now.getTime();
+    return getMoodByCustomTime({
+      user_id,
+      start_time,
+      end_time
+    });
+  },
   getMoodByLastWeek: async function () {
     const user_id = this.payload.uid;
     const end_time = new Date().getTime();
