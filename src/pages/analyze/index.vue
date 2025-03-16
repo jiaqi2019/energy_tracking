@@ -62,13 +62,13 @@
 
     <!-- 统计 Tab 内容 --> 
     <view v-if="activeTab === 'statistics'" class="statistics-content">
-      <MoodHeatmap />
+      <MoodHeatmap :moodList="currentMoodList"/>
        <view class="login-cta">
         <view class="cta-text">
           <text class="title font-yozai">解锁您的专属情绪分析报告</text>
           <text class="subtitle font-yozai">发现更多关于自己的有趣发现</text>
         </view>
-        <button class="login-btn font-yozai" @click="handleLogin">立即查看</button>
+        <button class="login-btn font-yozai" @click="handleLogin">敬请期待</button>
       </view>
     </view>
   </view>

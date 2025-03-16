@@ -63,10 +63,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
+interface Props {
+  moodList: Mood[]; // 从 moodList.ts 导入的类型
+}
+
+const props = defineProps<Props>();
+
 interface ContributionDay {
   date: string;
   level: number;
   count: number;
+  isActive: boolean;
 }
 
 interface MonthInfo {
@@ -111,7 +118,6 @@ function generateData(): ContributionDay[] {
   const data: ContributionDay[] = [];
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
   
   // 从1月1日开始
   const startDate = new Date(currentYear, 0, 1);
@@ -125,18 +131,39 @@ function generateData(): ContributionDay[] {
   const lastDayOfWeek = endDate.getDay();
   endDate.setDate(endDate.getDate() + (lastDayOfWeek === 0 ? 0 : 7 - lastDayOfWeek));
 
+  // 创建日期到记录次数的映射
+  const moodCountMap = new Map<string, number>();
+  props.moodList.forEach(mood => {
+    const date = new Date(mood.create_time);
+    const dateStr = date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
+    moodCountMap.set(dateStr, (moodCountMap.get(dateStr) || 0) + 1);
+  });
+
   const iterDate = new Date(startDate);
+  const currentMonth = currentDate.getMonth();
   
   while (iterDate <= endDate) {
+    const dateStr = iterDate.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
     const month = iterDate.getMonth();
     const isActive = month <= currentMonth && month >= currentMonth - 2;
+    const count = moodCountMap.get(dateStr) || 0;
     
+    // 根据记录次数确定等级
+    let level = 0;
+    if (count > 0) {
+      if (count >= 8) level = 4;
+      else if (count >= 6) level = 3;
+      else if (count >= 4) level = 2;
+      else if (count >= 1) level = 1;
+    }
+
     data.push({
-      date: iterDate.toISOString().split('T')[0],
-      level: isActive ? Math.floor(Math.random() * 5) : 0,
-      count: isActive ? Math.floor(Math.random() * 10) : 0,
+      date: dateStr,
+      level: isActive ? level : 0,
+      count: count,
       isActive: isActive
     });
+    
     iterDate.setDate(iterDate.getDate() + 1);
   }
   
@@ -157,10 +184,12 @@ const contributionWeeks = computed(() => {
 });
 
 const showContribution = (day: ContributionDay) => {
-  uni.showToast({
-    title: `${day.date}: ${day.count} contributions`,
-    icon: 'none'
-  });
+  if (day.count > 0) {
+    uni.showToast({
+      title: `${day.date}: ${day.count} 次记录`,
+      icon: 'none'
+    });
+  }
 };
 </script>
 
