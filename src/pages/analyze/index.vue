@@ -62,7 +62,7 @@
 
     <!-- 统计 Tab 内容 -->
     <view v-if="activeTab === 'statistics'" class="statistics-content">
-      <MoodHeatmap :moodList="currentMoodList"/>
+      <MoodHeatmap :moodList="heatmapMoodList"/>
        <view class="login-cta">
         <view class="cta-text">
           <text class="title font-yozai">解锁您的专属情绪分析报告</text>
@@ -96,6 +96,7 @@ const isLoggedIn = ref(false);
 const todayMoodList = ref([]);
 const weekMoodList = ref([]);
 const monthMoodList = ref([]);
+const heatmapMoodList = ref([]); // 新增热力图数据
 const currentMoodList = ref([]); // 当前展示的数据
 
 // 初始化云对象
@@ -107,8 +108,8 @@ const fetchLocalData = async () => {
     todayMoodList.value = await getMoodListLocal('today');
     weekMoodList.value = await getMoodListLocal('week');
     monthMoodList.value = await getMoodListLocal('month');
+    heatmapMoodList.value = getMoodListLocal('year'); // 获取热力图数据
     updateCurrentMoodList();
-
   } catch (error) {
     console.error('获取本地数据失败:', error);
   }
@@ -126,6 +127,9 @@ const fetchCloudData = async () => {
     // 获取月数据
     const monthResult = await userMoodRecordApi.getMoodByLastMonth();
     monthMoodList.value = calculateAverageMoodByDay(monthResult.data);
+    // 获取热力图数据
+    const heatmapResult = await userMoodRecordApi.getMoodByCurrentYear();
+    heatmapMoodList.value = heatmapResult.data;
     updateCurrentMoodList();
   } catch (error) {
     console.error('获取云端数据失败:', error);

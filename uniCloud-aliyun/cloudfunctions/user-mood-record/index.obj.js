@@ -145,6 +145,20 @@ module.exports = {
       end_time
     });
   },
+  getMoodByCurrentYear: async function () {
+    const user_id = this.payload.uid;
+    const now = new Date();
+    const end_time = now.getTime();
+    // 设置时间为当年的1月1日 00:00:00
+    now.setMonth(0, 1);
+    now.setHours(0, 0, 0, 0);
+    const start_time = now.getTime();
+    return getMoodByCustomTime({
+      user_id,
+      start_time,
+      end_time
+    });
+  },
   getMonthMood: async function (start_time,  end_time) {
     const user_id = this.payload.uid;
     return getMoodByCustomTime({

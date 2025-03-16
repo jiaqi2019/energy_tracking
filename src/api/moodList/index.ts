@@ -88,8 +88,23 @@ export const getLastWeekMoodList = (): Mood[] => {
   return calculateAverageMoodByDay(lastWeekMoods);
 };
 
+// 获取当前年份的心情记录
+export const getCurrentYearMoodList = (): Mood[] => {
+  const allMoods = getMoodListFromLocal();
+  const startOfYear = new Date();
+  startOfYear.setMonth(0, 1); // 设置为1月1日
+  startOfYear.setHours(0, 0, 0, 0);
+
+  // 过滤当前年份的心情记录
+  const currentYearMoods = allMoods.filter((mood: Mood) =>
+    new Date(mood.create_time) >= startOfYear
+  );
+
+  return currentYearMoods;
+};
+
 // 统一获取本地心情记录的方法
-export const getMoodListLocal = (type: 'today' | 'week' | 'month'): Mood[] => {
+export const getMoodListLocal = (type: 'today' | 'week' | 'month' | 'year'): Mood[] => {
   switch (type) {
   case 'today':
     return getTodayMoodList();
@@ -97,6 +112,8 @@ export const getMoodListLocal = (type: 'today' | 'week' | 'month'): Mood[] => {
     return getLastWeekMoodList();
   case 'month':
     return getLastMonthMoodList();
+  case 'year':
+    return getCurrentYearMoodList();
   default:
     return [];
   }
