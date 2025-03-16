@@ -9,7 +9,7 @@
     <view class="content">
       <!-- 登录按钮区域 -->
       <view class="action-buttons">
-        <button class="action-btn primary-btn font-yozai" @click="handleLogin">
+        <button v-if="false" class="action-btn primary-btn font-yozai" @click="handleLogin">
           登录
         </button>
         <button class="action-btn secondary-btn font-yozai" @click="handleJoinUs">
