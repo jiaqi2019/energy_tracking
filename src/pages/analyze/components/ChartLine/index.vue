@@ -82,6 +82,7 @@ const chartOpts = {
     itemCount: 5,
     fontSize: 12,
     color: "#999999",
+    boundaryGap: true
   },
   yAxis: {
     disabled: true,
@@ -114,6 +115,12 @@ const chartOpts = {
   },
   dataLabel: false
 };
+
+// 计算图表容器宽度
+const getChartWidth = computed(() => {
+  const minPointWidth = 80; // 每个数据点的最小宽度（像素）
+  return `${Math.max(props.moodList.length * minPointWidth, 300)}px`;
+});
 
 const handleScroll = (e) => {
   // 处理滚动事件，如果需要
@@ -255,10 +262,12 @@ watch(() => props.type, () => {
 .chart-scroll-view {
   width: 100%;
   height: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chart-container {
-  width: 200%;
+  width: v-bind(getChartWidth);
+  min-width: 100%;
   height: 100%;
   position: relative;
 }
