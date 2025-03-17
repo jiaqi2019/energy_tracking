@@ -5,7 +5,7 @@
     <view class="tab-container">
       <view
         :class="{
-          'tab-item font-yozai': true,
+          'tab-item font-yozai flex-1 text-center': true,
           active: activeTab === 'chart',
         }"
         @click="activeTab = 'chart'"
@@ -16,7 +16,7 @@
       <view class="tab-divider"></view>
       <view
         :class="{
-          'tab-item font-yozai': true,
+          'tab-item font-yozai flex-1 text-center': true,
           active: activeTab === 'statistics',
         }"
         @click="activeTab = 'statistics'"
@@ -209,7 +209,8 @@ onShow(() => {
 }
 
 .tab-item.active {
-  color: rgb(108, 109, 128); /* 激活状态颜色 */
+  color: #7bcdbf;
+  /* color: rgb(108, 109, 128);  */
   font-size: 18px; /* 激活状态字体放大 */
 }
 
@@ -242,7 +243,7 @@ onShow(() => {
 
 .time-item.active {
   background-color: white; /* 激活状态背景 */
-  color: rgb(40, 44, 53) !important; /* 激活文字颜色 */
+  color: rgb(40, 44, 53) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选阴影效果 */
 }
 .login-cta {

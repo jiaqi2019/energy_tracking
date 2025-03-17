@@ -1,4 +1,5 @@
 <template>
+  <view class="status-bar mb-16" />
   <view class="login-container">
     <!-- 顶部标题区域 -->
     <view class="header">

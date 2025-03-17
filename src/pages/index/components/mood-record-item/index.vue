@@ -1,5 +1,5 @@
 <template>
-	<uni-swipe-action>
+	<uni-swipe-action disable-scroll>
 		<uni-swipe-action-item>
 			<template v-slot:right>
 				<view class="delete-btn" @click="handleSwipeClick">

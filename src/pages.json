@@ -27,7 +27,7 @@
     {
       "path": "pages/mood-form/index",
       "style": {
-        "navigationBarTitleText": "当下你感受如何"
+        "navigationStyle": "custom"
       }
     },
     {

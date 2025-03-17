@@ -1,6 +1,9 @@
 <template>
-  <view class="header-bar mb-16" />
-
+  <view class="header-bar mb-16 relative" >
+    <view class="absolute icon-font close-btn" @click="handleClose">
+      &#xe633;
+    </view>
+  </view>
   <!-- 心情表情和滑动条部分 -->
   <view class="mood-container">
     <image :src="moodEmojis[currentMoodIndex].icon" class="mood-emoji"/>
@@ -31,38 +34,13 @@
 
 <script>
 import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
+import { moodEmojis } from '@/common/emoji';
 const userMoodRecordApi = uniCloud.importObject('user-mood-record');
 
 export default {
   data () {
     return {
-      moodEmojis: [
-        {
- text: '肝肠寸断',
-icon: '/static/emoji/very-sad.png',
-value: -2
-},
-        {
- text: '闷闷不乐',
-icon: '/static/emoji/sad.png',
-value: -1
-},
-        {
- text: '不喜不悲',
-icon: '/static/emoji/neutral.png',
-value: 0
-},
-        {
- text: '怡然自得',
-icon: '/static/emoji/happy.png',
-value: 1
-},
-        {
- text: '喜笑颜开',
-icon: '/static/emoji/very-happy.png',
-value: 2
-}
-      ],
+      moodEmojis,
       currentMoodIndex: 2, // 默认选中中间的表情
       content: '' // 事件内容
     };
@@ -96,12 +74,22 @@ value: 2
         icon: 'success',
       });
       uni.navigateBack({ delta: 1 });
+    },
+    handleClose () {
+      uni.navigateBack({ delta: 1 });
     }
   }
 };
+
 </script>
 
 <style>
+.close-btn {
+  font-size: 30px;
+  color: #7bcdbf;
+  left: 16px;
+  bottom: -25px;
+}
 .mood-container {
   display: flex;
   flex-direction: column;

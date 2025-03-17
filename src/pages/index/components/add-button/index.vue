@@ -4,7 +4,7 @@
     <view class="pulse-ring" :style="buttonSizeStyle" :animation="ringAnimationData"></view>
     <!-- 主按钮 -->
     <view class="circle flex items-center justify-center icon-font" :style="buttonSizeStyle" :animation="animationData">
-     &#xf0175;
+      &#xf0175;
     </view>
   </view>
 </template>
