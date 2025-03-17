@@ -10,7 +10,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import {
+ ref, onMounted, onUnmounted, computed
+} from 'vue';
 
 // 定义props
 const props = defineProps({
@@ -30,17 +32,17 @@ const props = defineProps({
     type: String,
     default: ''
   }
-})
+});
 
-const animationData = ref({})
-const ringAnimationData = ref({})
-let buttonAnimation = null
-let ringAnimation = null
+const animationData = ref({});
+const ringAnimationData = ref({});
+let buttonAnimation = null;
+let ringAnimation = null;
 
 const onClickAdd = () => {
   uni.navigateTo({
-    url: "/pages/mood-form/index",
-    openType: "navigate",
+    url: '/pages/mood-form/index',
+    openType: 'navigate',
   });
 };
 
@@ -50,7 +52,7 @@ const buttonSizeStyle = computed(() => ({
   height: `${props.size}px`,
   fontSize: `${props.fontSize}px`,
   borderRadius: `${props.borderRadius}px`
-}))
+}));
 
 // 初始化动画实例
 const initAnimations = () => {
@@ -59,54 +61,54 @@ const initAnimations = () => {
     duration: 1000,
     timingFunction: 'ease-in-out',
     delay: 0
-  })
-  
+  });
+
   // 光环动画
   ringAnimation = uni.createAnimation({
     duration: 1500,
     timingFunction: 'ease-out',
     delay: 0
-  })
-}
+  });
+};
 
 // 执行按钮动画
 const runButtonAnimation = () => {
-  buttonAnimation.scale(1.1).step()
-  buttonAnimation.scale(1).step()
-  animationData.value = buttonAnimation.export()
-}
+  buttonAnimation.scale(1.1).step();
+  buttonAnimation.scale(1).step();
+  animationData.value = buttonAnimation.export();
+};
 
 // 执行光环动画
 const runRingAnimation = () => {
   ringAnimation
     .opacity(1)
     .scale(1)
-    .step()
+    .step();
   ringAnimation
     .opacity(0)
     .scale(1.5)
-    .step()
-  ringAnimationData.value = ringAnimation.export()
-}
+    .step();
+  ringAnimationData.value = ringAnimation.export();
+};
 
-let animationTimer = null
+let animationTimer = null;
 
 onMounted(() => {
-  initAnimations()
-  
+  initAnimations();
+
   // 设置定时器执行动画
   animationTimer = setInterval(() => {
-    runButtonAnimation()
-    runRingAnimation()
-  }, 2000)
-})
+    runButtonAnimation();
+    runRingAnimation();
+  }, 2000);
+});
 
 onUnmounted(() => {
   if (animationTimer) {
-    clearInterval(animationTimer)
-    animationTimer = null
+    clearInterval(animationTimer);
+    animationTimer = null;
   }
-})
+});
 </script>
 
 <style scoped>

@@ -1,4 +1,5 @@
 <template>
+  <view class="header-bar mb-16" />
   <view class="analyze-container">
     <!-- Tab 切换 -->
     <view class="tab-container">
@@ -189,8 +190,6 @@ onShow(() => {
 
 <style scoped>
 .analyze-container {
-  padding: 16px;
-  padding-top: calc(16px + var(--status-bar-height));
   min-height: 100vh;
 }
 

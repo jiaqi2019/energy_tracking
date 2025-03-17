@@ -7,11 +7,11 @@
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
-        "background": "#ffffff",
-		"backgroundDark": "#2f0508",
-		"bottom": {
-			"offset": "auto"
-		},
+        "background" : "#ffffff",
+        "backgroundDark" : "#2f0508",
+        "bottom" : {
+            "offset" : "auto"
+        },
         "usingComponents" : true,
         "nvueStyleCompiler" : "uni-app",
         "compilerVersion" : 3,
@@ -55,12 +55,13 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wx7fd005d0d2884c39",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6" : false
         },
         "usingComponents" : true,
-        "mergeVirtualHostAttributes": true
+        "mergeVirtualHostAttributes" : true
     },
     "mp-alipay" : {
         "usingComponents" : true
@@ -70,10 +71,10 @@
     },
     "mp-toutiao" : {
         "usingComponents" : true,
-        "mergeVirtualHostAttributes": true
+        "mergeVirtualHostAttributes" : true
     },
-    "uniStatistics": {  
-        "enable": false
+    "uniStatistics" : {
+        "enable" : false
     },
     "vueVersion" : "3"
 }

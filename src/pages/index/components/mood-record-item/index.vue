@@ -41,6 +41,7 @@
 
   // 处理滑动按钮点击
   const handleSwipeClick = async () => {
+    console.log('handleSwipeClick', {id: props.id, create_time: props.time})
     emit('delete', {id: props.id, create_time: props.time});
     // uni.showModal({
     //   title: '提示',

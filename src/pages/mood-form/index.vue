@@ -1,9 +1,6 @@
 <template>
-  <navigation-bar
-    background-color="#ffffff00"
-    blur-effect="light"
-  />
-  
+  <view class="header-bar mb-16" />
+
   <!-- 心情表情和滑动条部分 -->
   <view class="mood-container">
     <image :src="moodEmojis[currentMoodIndex].icon" class="mood-emoji"/>
@@ -16,7 +13,7 @@
         @change="handleMoodChange"
         class="mood-slider"
       />
-    
+
   </view>
 
   <!-- 事件内容输入框 -->
@@ -33,57 +30,75 @@
 </template>
 
 <script>
-import { store as userStrore } from "@/uni_modules/uni-id-pages/common/store.js";
+import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
 const userMoodRecordApi = uniCloud.importObject('user-mood-record');
 
 export default {
-  data() {
+  data () {
     return {
       moodEmojis: [
-        { text: '肝肠寸断', icon: '/static/emoji/very-sad.png', value: -2 },
-        { text: '闷闷不乐', icon: '/static/emoji/sad.png', value: -1 },
-        { text: '不喜不悲', icon: '/static/emoji/neutral.png', value: 0 },
-        { text: '怡然自得', icon: '/static/emoji/happy.png', value: 1 },
-        { text: '喜笑颜开', icon: '/static/emoji/very-happy.png', value: 2 }
+        {
+ text: '肝肠寸断',
+icon: '/static/emoji/very-sad.png',
+value: -2
+},
+        {
+ text: '闷闷不乐',
+icon: '/static/emoji/sad.png',
+value: -1
+},
+        {
+ text: '不喜不悲',
+icon: '/static/emoji/neutral.png',
+value: 0
+},
+        {
+ text: '怡然自得',
+icon: '/static/emoji/happy.png',
+value: 1
+},
+        {
+ text: '喜笑颜开',
+icon: '/static/emoji/very-happy.png',
+value: 2
+}
       ],
       currentMoodIndex: 2, // 默认选中中间的表情
       content: '' // 事件内容
-    }
+    };
   },
   methods: {
-    handleMoodChange(e) {
-      this.currentMoodIndex = e.detail.value
+    handleMoodChange (e) {
+      this.currentMoodIndex = e.detail.value;
     },
-    async handleSave() {
+    async handleSave () {
       const moodData = {
         mood_score: this.moodEmojis[this.currentMoodIndex].value,
         event_desc: this.content,
-      }
-      if(userStrore.hasLogin){
-        const addRes =await userMoodRecordApi.add(moodData);
+      };
+      if(userStrore.hasLogin) {
+        const addRes = await userMoodRecordApi.add(moodData);
         if (addRes.errCode != 0) {
           uni.showToast({
             title: '添加失败,请重试!',
             icon: 'error'
-          })
+          });
           return;
-        } 
+        }
       }
       uni.$emit('addMood', {
         ...moodData,
         create_time: Date.now()
-      })
+      });
       // TODO: 这里添加实际的保存逻辑
       uni.showToast({
         title: '保存成功！',
         icon: 'success',
-      })
-      uni.navigateBack({
-        delta: 1
-      })
+      });
+      uni.navigateBack({ delta: 1 });
     }
   }
-}
+};
 </script>
 
 <style>

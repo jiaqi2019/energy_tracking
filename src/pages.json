@@ -49,7 +49,7 @@
       }
     },
     {
-      "path": "/uni_modules/uni-id-pages/pages/retrieve/retrieve",
+      "path": "uni_modules/uni-id-pages/pages/retrieve/retrieve",
       "style": {
         "navigationBarTitleText": "找回密码"
       }
@@ -67,23 +67,43 @@
     "borderStyle": "white",
     "height": "50px",
     "blurEffect": "extralight",
+    /*  #ifdef   MP-WEIXIN  */
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/todolist.png",
+        "selectedIconPath": "static/tabbar/todolist-active.png"
+      },
+      {
+        "pagePath": "pages/analyze/index",
+        "iconPath": "static/tabbar/tubiao.png",
+        "selectedIconPath": "static/tabbar/tubiao-active.png"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "iconPath": "static/tabbar/settings.png",
+        "selectedIconPath": "static/tabbar/settings-active.png"
+      }
+    ],
+    /*  #endif  */
+    /*  #ifdef APP-PLUS  */
     "iconfontSrc": "static/icon/iconfont.ttf",
     "list": [
       {
         "pagePath": "pages/index/index",
         "iconfont": {
           "text": "\ue60f",
-          "selectedText":"\ue60f",
+          "selectedText": "\ue60f",
           "fontSize": "30px",
-          "selectedColor":"#7bcdbf"
+          "selectedColor": "#7bcdbf"
         }
       },
       {
         "pagePath": "pages/analyze/index",
         "iconfont": {
           "text": "\ue6d8",
-          "selectedText":"\ue6d8",
-          "selectedColor":"#7bcdbf",
+          "selectedText": "\ue6d8",
+          "selectedColor": "#7bcdbf",
           "fontSize": "30px"
         }
       },
@@ -91,12 +111,13 @@
         "pagePath": "pages/settings/index",
         "iconfont": {
           "text": "\ue851",
-          "selectedText":"\ue851",
-          "selectedColor":"#7bcdbf",
+          "selectedText": "\ue851",
+          "selectedColor": "#7bcdbf",
           "fontSize": "30px"
         }
       }
     ]
+    /*  #endif  */
   },
   "globalStyle": {}
 }

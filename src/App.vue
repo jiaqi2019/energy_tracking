@@ -32,16 +32,25 @@
 </script>
 <style lang="scss">
 @import '@/uni_modules/uni-scss/index.scss';
-  #app, uni-app, uni-page, uni-page-wrapper {
+  #app, uni-app, uni-page, uni-page-wrapper, page {
     height: unset;
+    background-color: #ebf2fa;
+    min-height: 100vh;
   }
   body {
     --text-primary: #161823;
-    background-color: #ebf2fa;
     // background-color: #16182314;
     color: var(--text-primary);
     height: unset;
     padding-bottom: 80px;
+  }
+  .status-bar {
+    height: var(--status-bar-height);
+    width: 100%;
+  }
+  .header-bar {
+    height: calc(var(--status-bar-height) + 44px);
+    width: 100%;
   }
 	/*每个页面公共css */
 	.w-full {
@@ -127,6 +136,9 @@
   .mt-16 {
     margin-top: 16px;
   }
+  .mb-16 {
+    margin-bottom: 16px;
+  }
   .mt-8 {
     margin-top: 8px;
   }
@@ -170,7 +182,7 @@
 
   @font-face {
     font-family: Yozai;
-    src: url('./static/font/Yozai-Medium.ttf');
+    src: url('~@/static/font/Yozai-Medium.ttf') format('truetype');;
   }
   // .uni-tabbar {
   //   display: none !important;

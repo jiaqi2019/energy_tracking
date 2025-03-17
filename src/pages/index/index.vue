@@ -1,11 +1,13 @@
 <template>
-  <view class="status_bar" />
+  <view class="header-bar mb-16" />
   <view v-if="state.loadMoreStatus === 'noMore' && !state.moodList.length">
     <text class="h1 font-yozai flex justify-center">你现在感觉怎么样</text>
     <text class="h3 font-yozai flex justify-center"
       >记录当下，帮你更好觉察情绪</text
     >
-   <AddButton  :size="240" :fontSize="100" :borderRadius="80" custom-class="btn-large"/>
+    <view class="btn-large">
+      <AddButton  :size="240" :fontSize="100" :borderRadius="80"/>
+    </view>
   </view>
   <!-- list渲染 -->
   <view v-else class="px-16">
@@ -17,18 +19,22 @@
     <vew class="flex justify-center w-full">
       <image :src="currentMoodEmoji.icon" class="mood-emoji" />
     </vew>
-    <MoodRecordItem
-      :key="item.create_time"
-      v-for="(item) in state.moodList"
-      :id="item._id"
-      :time="item.create_time"
-      :mood-score="item.mood_score"
-      :eventDesc="item.event_desc"
-      @delete="handleDelete"
-      class="mood-item"
-    ></MoodRecordItem>
+    <view class="mood-item"  :key="item.create_time"
+       v-for="(item) in state.moodList">
+      <MoodRecordItem
+        :id="item._id"
+        :time="item.create_time"
+        :mood-score="item.mood_score"
+        :eventDesc="item.event_desc"
+        @delete="handleDelete"
+        class="mood-item"
+      />
+    </view>
+
     <uni-load-more :status="state.loadMoreStatus" />
-    <AddButton custom-class="fixed-bottom"/>
+    <view class="fixed-bottom">
+      <AddButton />
+    </view>
   </view>
 
 </template>
@@ -115,15 +121,18 @@ const loadDataFromApi = async () => {
 const handleDelete = async ({
 id, create_time
 }) => {
+  console.log('handleDelete');
   if(!userStrore.hasLogin) {
     delMoodListFromLocal(create_time);
     const index = state.moodList.findIndex(item => item._id === id);
+    console.log('handleDelete index', index);
     if (index !== -1) {
       state.moodList.splice(index, 1);
     }
     return;
   }
   const res = await delMoodListFromApi(id);
+  console.log('handleDelete res', res);
   if(res.errCode === 0) {
     state.moodList = state.moodList.filter(item => item._id !== id);
   } else {
@@ -142,11 +151,7 @@ onReachBottom(() => {
 </script>
 
 <style scoped>
-.status_bar {
-  height: var(--status-bar-height);
-  width: 100%;
-  margin-bottom: 30px;
-}
+
 .circle {
   width: 250px;
   height: 250px;
