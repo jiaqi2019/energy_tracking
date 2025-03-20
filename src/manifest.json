@@ -22,7 +22,9 @@
             "delay" : 0
         },
         /* 模块配置 */
-        "modules" : {},
+        "modules" : {
+            "OAuth" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
@@ -46,9 +48,24 @@
                 ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "capabilities" : {
+                    "entitlements" : {
+                        "com.apple.developer.associated-domains" : [
+                            "applinks:static-mp-6f41d46f-9381-40ab-a723-b6e08cdc05da.next.bspapp.com"
+                        ]
+                    }
+                }
+            },
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wx7fd005d0d2884c39",
+                        "UniversalLinks" : "https://static-mp-6f41d46f-9381-40ab-a723-b6e08cdc05da.next.bspapp.com/uni-universallinks/__UNI__EFBCC1D/"
+                    }
+                }
+            }
         }
     },
     /* 快应用特有相关 */
@@ -58,7 +75,7 @@
         "appid" : "wx7fd005d0d2884c39",
         "setting" : {
             "urlCheck" : false,
-            "es6" : false
+            "es6" : true
         },
         "usingComponents" : true,
         "mergeVirtualHostAttributes" : true
@@ -76,5 +93,6 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "_spaceID" : "mp-6f41d46f-9381-40ab-a723-b6e08cdc05da"
 }

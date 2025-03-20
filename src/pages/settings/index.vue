@@ -11,31 +11,41 @@
       <!-- 登录按钮区域 -->
       <view class="action-buttons">
         <button v-if="!userStrore.hasLogin" class="action-btn primary-btn font-yozai" @click="handleLogin">
-          登录
+          登录同步数据
+        </button>
+        <button v-else class="action-btn primary-btn font-yozai" @click="handleLoginout">
+          退出登陆
         </button>
         <button class="action-btn secondary-btn font-yozai" @click="handleJoinUs">
           加我一起改变！
         </button>
-        <button class="action-btn outline-btn font-yozai" @click="handleContact">
-          我们反馈的联系方式
-        </button>
+        <!--
+          <button class="action-btn outline-btn font-yozai" @click="handleContact">
+            我们反馈的联系方式
+          </button>
+          -->
       </view>
 
       <!-- 附加信息区域 -->
+      <!--
       <view class="info-section">
         <text class="info-text font-yozai">一些关于这个产品的承诺</text>
         <text class="info-text font-yozai">一些合规要求我们必须放的</text>
       </view>
+      -->
     </view>
   </view>
 </template>
 
 <script setup>
 import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
-
+import { mutations } from '@/uni_modules/uni-id-pages/common/store.js';
 const handleLogin = () => {
   // 处理登录逻辑
   uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+};
+const handleLoginout = () => {
+  mutations.logout();
 };
 
 const handleJoinUs = () => {
