@@ -11,7 +11,12 @@
       <!-- 登录按钮区域 -->
       <view class="action-buttons">
         <button v-if="!userStrore.hasLogin" class="action-btn primary-btn font-yozai" @click="handleLogin">
+          <!--  #ifdef MP-WEIXIN  -->
+          微信授权登录
+          <!--  #endif  -->
+          <!--  #ifndef MP-WEIXIN  -->
           登录同步数据
+          <!--  #endif  -->
         </button>
         <button v-else class="action-btn primary-btn font-yozai" @click="handleLoginout">
           退出登陆
@@ -47,6 +52,7 @@ const handleLogin = () => {
   /*  #endif  */
   /*  #ifdef MP-WEIXIN  */
   const type = 'weixin';
+  uni.showLoading({ title: '正在登陆...' });
   uni.login({
     'provider': type,
     'onlyAuthorize': true,
@@ -60,7 +66,7 @@ const handleLogin = () => {
 						icon: 'none',
 						duration: 2000
 					});
-					mutations.loginSuccess(result);
+					mutations.loginSuccess({ autoBack: false });
 				})
 				.catch(e => {
 					uni.showModal({

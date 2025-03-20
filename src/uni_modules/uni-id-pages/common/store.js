@@ -66,7 +66,7 @@ export const mutations = {
     let userInfo = cover ? data : Object.assign(store.userInfo, data);
     store.userInfo = Object.assign({}, userInfo);
     store.hasLogin = Object.keys(store.userInfo).length != 0;
-    // console.log('store.userInfo', store.userInfo);
+    console.log('store.userInfo', store);
     uni.setStorageSync('uni-id-pages-userInfo', store.userInfo);
     return data;
   },
@@ -83,7 +83,7 @@ export const mutations = {
     uni.setStorageSync('uni_id_token_expired', 0);
     this.setUserInfo({}, { cover: true });
     uni.$emit('uni-id-pages-logout');
-    uni.redirectTo({ url: `/${pagesJson.uniIdRouter && pagesJson.uniIdRouter.loginPage ? pagesJson.uniIdRouter.loginPage : 'uni_modules/uni-id-pages/pages/login/login-withoutpwd'}`, });
+    // uni.redirectTo({ url: `/${pagesJson.uniIdRouter && pagesJson.uniIdRouter.loginPage ? pagesJson.uniIdRouter.loginPage : 'uni_modules/uni-id-pages/pages/login/login-withoutpwd'}`, });
   },
   loginBack (e = {}) {
     const { uniIdRedirectUrl = '' } = e;

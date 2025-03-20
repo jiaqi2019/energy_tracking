@@ -101,8 +101,7 @@ const heatmapMoodList = ref([]); // 新增热力图数据
 const currentMoodList = ref([]); // 当前展示的数据
 
 // 初始化云对象
-const userMoodRecordApi = uniCloud.importObject('user-mood-record', { customUI: true // 禁用默认提示框
-});
+const userMoodRecordApi = uniCloud.importObject('user-mood-record', { customUI: true });
 
 const fetchLocalData = async () => {
   try {
