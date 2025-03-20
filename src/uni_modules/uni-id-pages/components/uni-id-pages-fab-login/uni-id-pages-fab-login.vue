@@ -476,23 +476,24 @@
 				})
 			},
 			login(params, type) { //联网验证登录
-				// console.log('执行登录开始----');
+				console.log('执行登录开始----');
 				console.log({params,type});
 				//toLowerCase
 				let action = 'loginBy' + type.trim().replace(type[0], type[0].toUpperCase())
 				const uniIdCo = uniCloud.importObject("uni-id-co",{
 					customUI:true
 				})
+				console.log('uniIdCo[action]',action, params); 
 				uniIdCo[action](params).then(result => {
 					uni.showToast({
 						title: '登录成功',
 						icon: 'none',
 						duration: 2000
 					});
-					// #ifdef H5
-					result.loginType = type
-					// #endif
-					mutations.loginSuccess(result)
+					
+					mutations.loginSuccess({
+						autoBack: false
+					})
 				})
 				.catch(e=>{
 					uni.showModal({

@@ -77,6 +77,12 @@ uni.$on('addMood', (data) => {
   state.moodList.unshift(data);
 });
 
+uni.$on('uni-id-pages-logout', () => {
+  state.moodList = [];
+  state.loadMoreStatus = 'noMore';
+});
+
+
 
 onMounted(() => {
   if(!userStrore.hasLogin) {

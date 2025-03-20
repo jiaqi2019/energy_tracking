@@ -42,7 +42,48 @@ import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js'
 import { mutations } from '@/uni_modules/uni-id-pages/common/store.js';
 const handleLogin = () => {
   // 处理登录逻辑
+  /*  #ifndef MP-WEIXIN  */
   uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
+  /*  #endif  */
+  /*  #ifdef MP-WEIXIN  */
+  const type = 'weixin';
+  uni.login({
+    'provider': type,
+    'onlyAuthorize': true,
+    success: async e => {
+      const params = { code: e.code };
+      const uniIdCo = uniCloud.importObject('uni-id-co', { customUI: true });
+
+      uniIdCo.loginByWeixin(params).then(result => {
+					uni.showToast({
+						title: '登录成功',
+						icon: 'none',
+						duration: 2000
+					});
+					mutations.loginSuccess(result);
+				})
+				.catch(e => {
+					uni.showModal({
+						content: e.message,
+						confirmText: '知道了',
+						showCancel: false
+					});
+				})
+				.finally(e => {
+					uni.hideLoading();
+				});
+    },
+    fail: async (err) => {
+      uni.showModal({
+        content: `登录失败; code: ${err.errCode || -1}`,
+        confirmText: '知道了',
+        showCancel: false
+      });
+      uni.hideLoading();
+    }
+  });
+  /*  #endif  */
+
 };
 const handleLoginout = () => {
   mutations.logout();
