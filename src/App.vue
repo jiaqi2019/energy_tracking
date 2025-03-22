@@ -4,7 +4,6 @@
     onLaunch, onShow, onHide
   } from '@dcloudio/uni-app';
   import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js';
-  import { syncMoodList } from '@/api/moodList/syncMoodList';
 
   onLaunch(async () => {
     await uniIdPageInit();
@@ -12,12 +11,6 @@
     if(!userStrore.isExpired) {
       // uni.navigateTo({ url: '/uni_modules/uni-id-pages/pages/login/login-withpwd' });
       // return;
-    }
-    if(!userStrore.hasLogin) {
-      uni.$on('uni-id-pages-login-success', () => {
-        console.log('login success');
-        syncMoodList();
-      });
     }
     uniCloud.onRefreshToken(function (e) {
       console.log('refreshToken', e);

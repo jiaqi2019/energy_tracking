@@ -54,6 +54,7 @@ export default {
         mood_score: this.moodEmojis[this.currentMoodIndex].value,
         event_desc: this.content,
       };
+      console.log('userStrore', userStrore);
       if(userStrore.hasLogin) {
         const addRes = await userMoodRecordApi.add(moodData);
         if (addRes.errCode != 0) {

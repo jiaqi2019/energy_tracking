@@ -61,11 +61,12 @@ const handleLogin = () => {
       const uniIdCo = uniCloud.importObject('uni-id-co', { customUI: true });
 
       uniIdCo.loginByWeixin(params).then(result => {
-					uni.showToast({
+        uni.showToast({
 						title: '登录成功',
 						icon: 'none',
 						duration: 2000
 					});
+          console.log('mutations.loginSuccess');
 					mutations.loginSuccess({ autoBack: false });
 				})
 				.catch(e => {

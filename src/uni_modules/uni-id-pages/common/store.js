@@ -66,7 +66,6 @@ export const mutations = {
     let userInfo = cover ? data : Object.assign(store.userInfo, data);
     store.userInfo = Object.assign({}, userInfo);
     store.hasLogin = Object.keys(store.userInfo).length != 0;
-    console.log('store.userInfo', store);
     uni.setStorageSync('uni-id-pages-userInfo', store.userInfo);
     return data;
   },
@@ -124,6 +123,7 @@ export const mutations = {
     uni.navigateBack({ delta });
   },
   loginSuccess (e = {}) {
+    console.log('loginSuccess', e);
     const {
       showToast = true, toastText = '登录成功', autoBack = true, uniIdRedirectUrl = '', passwordConfirmed
     } = e;
@@ -137,7 +137,7 @@ export const mutations = {
     }
     // 异步调用（更新用户信息）防止获取头像等操作阻塞页面返回
     this.updateUserInfo();
-
+    console.log('emit login-success');
     uni.$emit('uni-id-pages-login-success');
 
     if (config.setPasswordAfterLogin && !passwordConfirmed) {

@@ -54,6 +54,8 @@ import { onReachBottom } from '@dcloudio/uni-app';
 import {
  delMoodListFromLocal, delMoodListFromApi
 } from '@/api/moodList/del';
+import { syncMoodList } from '@/api/moodList/syncMoodList';
+
 const userMoodRecordApi = uniCloud.importObject('user-mood-record', { customUI: true });
 const state = reactive({
   moodList: !userStrore.hasLogin ? getMoodListFromLocal(true) : [],
@@ -66,6 +68,11 @@ const currentMoodEmoji = computed(() => {
   if (!state.moodList.length) return {};
   const latestMood = state.moodList[0];
   return moodEmojiMap[latestMood.mood_score] || moodEmojiMap[0];
+});
+
+uni.$on('uni-id-pages-login-success', () => {
+  syncMoodList();
+  uni.reLaunch({ url: '/pages/index/index' });
 });
 
 uni.$on('addMood', (data) => {
