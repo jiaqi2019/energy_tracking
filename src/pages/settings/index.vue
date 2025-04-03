@@ -22,7 +22,7 @@
           退出登陆
         </button>
         <button class="action-btn secondary-btn font-yozai" @click="handleJoinUs">
-          加我一起改变！
+          🎁 联系小帅享专属服务🎁
         </button>
         <!--
           <button class="action-btn outline-btn font-yozai" @click="handleContact">
@@ -97,7 +97,60 @@ const handleLoginout = () => {
 };
 
 const handleJoinUs = () => {
-  // 处理加入逻辑
+  uni.showActionSheet({
+    itemList: ['复制微信号'],
+    success: function (res) {
+      switch (res.tapIndex) {
+        case 0:
+          // 复制微信号到剪贴板
+          uni.setClipboardData({
+            data: 'yihangtang666', // 替换成实际的微信号
+            success: function () {
+              uni.showToast({
+                title: '微信号已复制',
+                icon: 'success'
+              });
+            }
+          });
+          break;
+        case 1:
+          // 打开客服会话
+          uni.openCustomerServiceChat({
+            extInfo: { url: 'YOUR_CUSTOMER_SERVICE_URL' }, // 替换成真实的客服会话链接
+            corpId: 'YOUR_CORP_ID', // 替换成企业ID
+            success (res) {
+              console.log('打开客服会话成功');
+            },
+            fail (err) {
+              console.error('打开客服会话失败', err);
+              // 如果打开失败，提供备选方案
+              uni.showModal({
+                title: '温馨提示',
+                content: '无法打开客服会话，请复制微信号添加',
+                confirmText: '复制微信号',
+                success: (res) => {
+                  if (res.confirm) {
+                    uni.setClipboardData({
+                      data: 'YOUR_WECHAT_ID', // 替换成实际的微信号
+                      success: function () {
+                        uni.showToast({
+                          title: '微信号已复制',
+                          icon: 'success'
+                        });
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          });
+          break;
+      }
+    },
+    fail: function (res) {
+      console.log(res.errMsg);
+    }
+  });
 };
 
 const handleContact = () => {
@@ -151,9 +204,43 @@ const handleContact = () => {
 }
 
 .secondary-btn {
-  background-color: #43AA8B;
+  background: linear-gradient(45deg, #FF6B6B, #43AA8B);
   color: white;
   border: none;
+  box-shadow: 0 4px 15px rgba(67, 170, 139, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.secondary-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 80%,
+    transparent 100%
+  );
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transform: skewX(20deg);
+  animation: conanShine 4s infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes conanShine {
+  0% {
+    left: -100%;
+  }
+  45%, 100% {
+    left: 200%;
+  }
 }
 
 .outline-btn {
