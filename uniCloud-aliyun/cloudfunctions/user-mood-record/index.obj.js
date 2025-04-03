@@ -185,6 +185,21 @@ module.exports = {
 
     return res;
   },
+  update: async function (moodData) {
+    const user_id = this.payload.uid;
+    const res = await dbJQL.collection('user-mood-record')
+      .where({
+        _id: moodData._id,
+        user_id,
+        is_deleted: false
+      })
+      .update({
+        mood_score: moodData.mood_score,
+        event_desc: moodData.event_desc,
+        update_time: Date.now()
+      });
+    return res;
+  },
 
   _after (error, result) {
     if (error) {

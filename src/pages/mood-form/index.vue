@@ -14,6 +14,7 @@
         :max="4"
         :step="1"
         @change="handleMoodChange"
+        @changing="handleMoodChanging"
         class="mood-slider"
       />
 
@@ -42,10 +43,30 @@ export default {
     return {
       moodEmojis,
       currentMoodIndex: 2, // 默认选中中间的表情
-      content: '' // 事件内容
+      content: '', // 事件内容
+      isUpdate: false, // 是否是更新,
+      create_time: '', // 创建时间
+      // eslint-disable-next-line vue/no-reserved-keys
+      _id: undefined // 记录id
     };
   },
+  onLoad (options) {
+    if (options.moodRecord) {
+      console.log('options.moodRecord', options.moodRecord);
+      const moodRecord = JSON.parse(options.moodRecord);
+      const index = this.moodEmojis.findIndex(item => item.value === moodRecord.mood_score);
+      this.currentMoodIndex = index;
+      this.content = moodRecord.event_desc;
+      this.isUpdate = true;
+      this.create_time = moodRecord.create_time;
+      this._id = moodRecord._id;
+    }
+  },
+
   methods: {
+    handleMoodChanging (e) {
+      this.currentMoodIndex = e.detail.value;
+    },
     handleMoodChange (e) {
       this.currentMoodIndex = e.detail.value;
     },
@@ -53,22 +74,27 @@ export default {
       const moodData = {
         mood_score: this.moodEmojis[this.currentMoodIndex].value,
         event_desc: this.content,
+        create_time: this.create_time || Date.now(),
+        update_time: Date.now(),
+        _id: this._id
       };
-      console.log('userStrore', userStrore);
+      let res = {};
       if(userStrore.hasLogin) {
-        const addRes = await userMoodRecordApi.add(moodData);
-        if (addRes.errCode != 0) {
+        if(this.isUpdate) {
+          res = await userMoodRecordApi.update(moodData);
+        }else {
+          res = await userMoodRecordApi.add(moodData);
+        }
+        if (res.errCode != 0) {
           uni.showToast({
-            title: '添加失败,请重试!',
+            title: `${this.isUpdate ? '更新' : '添加'}失败,请重试!`,
             icon: 'error'
           });
           return;
         }
+        moodData._id = res.id;
       }
-      uni.$emit('addMood', {
-        ...moodData,
-        create_time: Date.now()
-      });
+      uni.$emit(this.isUpdate ? 'updateMood' : 'addMood', moodData);
       // TODO: 这里添加实际的保存逻辑
       uni.showToast({
         title: '保存成功！',

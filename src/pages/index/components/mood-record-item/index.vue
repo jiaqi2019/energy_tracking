@@ -8,11 +8,11 @@
 			</template>
 			<view :class="{'mood-card':true,'mood-pos': props.moodScore > 0, 'mood-nag': props.moodScore < 0 } ">
 				<!-- 卡片头部 -->
-				<view class="flex items-center">
+				<view class="flex items-center" @click="handleClickMoodItem">
 					<view class="flex-1">
 						<view class="time">{{ date }}</view>
 						<!-- 卡片内容 -->
-						<view class="card-content text-TextPrimary mt-8">
+						<view class="card-content text-TextPrimary mt-8 font-yozai">
 							{{ eventDesc || "什么也没写"}}
 						</view>
 					</view>
@@ -35,12 +35,18 @@
     time : number;
     moodScore : number;
     eventDesc : string;
+    data: any
   }>();
 
-  const emit = defineEmits(['delete']);
-
+  const emit = defineEmits(['delete', 'clickMoodItem']);
+  const handleClickMoodItem = () => {
+    console.log('xxx', props.data);
+    emit('clickMoodItem',props.data);
+  }
+  
   // 处理滑动按钮点击
-  const handleSwipeClick = async () => {
+  const handleSwipeClick = async (event: Event) => {
+    event.stopPropagation();
     console.log('handleSwipeClick', {id: props.id, create_time: props.time})
     emit('delete', {id: props.id, create_time: props.time});
     // uni.showModal({

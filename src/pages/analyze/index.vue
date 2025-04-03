@@ -90,7 +90,7 @@ import { onShow } from '@dcloudio/uni-app';
 // 初始化 Tab 状态
 const activeTab = ref('chart');
 // 初始化时间选择状态
-const selectedTime = ref('today');
+const selectedTime = ref('week');
 // 初始化登陆状态
 const isLoggedIn = ref(false);
 

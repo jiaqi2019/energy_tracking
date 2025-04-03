@@ -1,5 +1,5 @@
 <template>
-  <view class="header-bar mb-16" />
+  <view class="header-bar header-margin"/>
   <view v-if="state.loadMoreStatus === 'noMore' && !state.moodList.length">
     <text class="h1 font-yozai flex justify-center">你现在感觉怎么样</text>
     <text class="h3 font-yozai flex justify-center"
@@ -22,16 +22,18 @@
     <view class="mood-item"  :key="item.create_time"
        v-for="(item) in state.moodList">
       <MoodRecordItem
+        :data="item"
         :id="item._id"
         :time="item.create_time"
         :mood-score="item.mood_score"
         :eventDesc="item.event_desc"
         @delete="handleDelete"
+        @clickMoodItem="handleClickMoodItem"
         class="mood-item"
       />
     </view>
 
-    <uni-load-more :status="state.loadMoreStatus" />
+    <uni-load-more :status="state.loadMoreStatus" :contentText="{contentrefresh: '正在加载...',contentnomore: '记录本身就是一种宣泄'}" />
     <view class="fixed-bottom">
       <AddButton />
     </view>
@@ -50,7 +52,7 @@ import { store as userStrore } from '@/uni_modules/uni-id-pages/common/store.js'
 import {
  getMoodListFromLocal, getMoodList
 } from '@/api/moodList/index';
-import { onReachBottom } from '@dcloudio/uni-app';
+import { onReachBottom, } from '@dcloudio/uni-app';
 import {
  delMoodListFromLocal, delMoodListFromApi
 } from '@/api/moodList/del';
@@ -80,16 +82,26 @@ uni.$on('addMood', (data) => {
   if(!userStrore.hasLogin) {
     uni.setStorageSync('moodList', [...state.moodList, data]);
   }
-  console.log(uni.getStorageSync('moodList'));
   state.moodList.unshift(data);
+});
+
+uni.$on('updateMood', async (data) => {
+  let index = -1;
+
+  if(!userStrore.hasLogin) {
+     index = state.moodList.findIndex(item => item.create_time === data.create_time);
+  }else {
+    index = state.moodList.findIndex(item => item._id === data._id);
+  }
+  if(index !== -1) {
+    state.moodList[index] = data;
+  }
 });
 
 uni.$on('uni-id-pages-logout', () => {
   state.moodList = [];
   state.loadMoreStatus = 'noMore';
 });
-
-
 
 onMounted(() => {
   if(!userStrore.hasLogin) {
@@ -108,6 +120,7 @@ const loadDataFromApi = async () => {
       const {
         mood_list, has_more
       } = data;
+      console.log('loadDataFromApi mood_list', mood_list);
       const moodList = mood_list;
       state.moodList = [...state.moodList, ...moodList];
       const latestMood = state.moodList[state.moodList.length - 1];
@@ -156,6 +169,15 @@ id, create_time
   }
 };
 
+const handleClickMoodItem = (moodItem) => {
+  uni.navigateTo({
+    url: `/pages/mood-form/index?moodRecord=${JSON.stringify(moodItem)}`,
+    openType: 'navigate',
+    animationType: 'pop-in',
+    animationDuration: 200
+  });
+};
+
 onReachBottom(() => {
   if (state.loadMoreStatus === 'more') {
     loadDataFromApi();
@@ -164,6 +186,13 @@ onReachBottom(() => {
 </script>
 
 <style scoped>
+
+.header-margin {
+  margin-bottom: 16px;
+  /*  #ifdef   MP-WEIXIN  */
+  margin-bottom: 50px;
+  /*  #endif  */
+}
 
 .circle {
   width: 250px;

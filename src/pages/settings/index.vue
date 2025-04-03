@@ -1,5 +1,5 @@
 <template>
-  <view class="status-bar mb-16" />
+  <view class="header-bar" />
   <view class="login-container">
     <!-- 顶部标题区域 -->
     <view class="header">
@@ -109,7 +109,6 @@ const handleContact = () => {
 .login-container {
   min-height: 100vh;
   padding: 20px;
-  padding-top: calc(20px + var(--status-bar-height));
 }
 
 .header {

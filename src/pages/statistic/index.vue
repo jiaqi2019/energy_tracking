@@ -142,7 +142,6 @@
       state.lineChartData = state.lineMonthData;
       state.ringChartData = state.ringMonthData;
     }
-    console.log(state);
   };
 
 </script>
