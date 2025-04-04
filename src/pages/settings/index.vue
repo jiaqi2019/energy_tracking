@@ -232,6 +232,7 @@ const handleContact = () => {
   transform: skewX(20deg);
   animation: conanShine 4s infinite;
   mix-blend-mode: overlay;
+  border: none !important;
 }
 
 @keyframes conanShine {
