@@ -12,7 +12,7 @@
 					<view class="flex-1">
 						<view class="time">{{ date }}</view>
 						<!-- 卡片内容 -->
-						<view class="card-content text-TextPrimary mt-8 font-yozai">
+						<view class="card-content text-TextPrimary mt-8">
 							{{ eventDesc || "什么也没写"}}
 						</view>
 					</view>
