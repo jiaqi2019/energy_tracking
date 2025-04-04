@@ -86,6 +86,7 @@ uni.$on('addMood', (data) => {
 });
 
 uni.$on('updateMood', async (data) => {
+  console.log('updateMood',data)
   let index = -1;
 
   if(!userStrore.hasLogin) {

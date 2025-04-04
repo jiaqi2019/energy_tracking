@@ -85,6 +85,7 @@ export default {
         }else {
           res = await userMoodRecordApi.add(moodData);
         }
+        console.log('res', res)
         if (res.errCode != 0) {
           uni.showToast({
             title: `${this.isUpdate ? '更新' : '添加'}失败,请重试!`,
@@ -92,7 +93,9 @@ export default {
           });
           return;
         }
-        moodData._id = res.id;
+        if(!this.isUpdate){
+          moodData._id = res.id;
+        }
       }
       uni.$emit(this.isUpdate ? 'updateMood' : 'addMood', moodData);
       // TODO: 这里添加实际的保存逻辑
